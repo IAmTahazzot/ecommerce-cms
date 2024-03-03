@@ -2,6 +2,7 @@ import type { navList } from "@/components/Sidebar/Sidebar";
 import { FaCog, FaTag } from "react-icons/fa";
 import { TbDashboard } from "react-icons/tb";
 
+// [WARNING]: Currently, the Sidebar component only supports one level of nesting. So, DO NOT ATTMEPT TO ADD MORE THAN ONE LEVEL OF NESTING or it will break the UI.
 export const Navigation: navList[] = [
   {
     title: "Dashboard",
