@@ -4,7 +4,7 @@ import { Sidebar } from './Sidebar';
 type Story = StoryObj<typeof Sidebar>;
 
 const meta: Meta<typeof Sidebar> = {
-  title: 'Sidebar',
+  title: 'Components/Sidebar',
   component: Sidebar,
 }
 
