@@ -8,7 +8,7 @@ const MainLayout = ({ children }: { children: React.ReactNode }) => {
     <div>
       <Header />
       <Sidebar navigation={Navigation} />
-      <main className='ml-[212px]'>{children}</main>
+      <main className='ml-[212px] mt-24 mr-[270px]'>{children}</main>
       <NotificationPanel />
     </div>
   );
