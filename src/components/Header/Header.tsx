@@ -22,7 +22,7 @@ export const Header = async () => {
   const shops = await getMyShop();
 
   return (
-    <header className="fixed top-0 left-[212px] right-0 py-4 px-6 border-b border-neutral-200">
+    <header className="fixed top-0 left-[212px] right-[270px] py-4 px-6 border-b border-neutral-200">
       <div className="flex items-center justify-between h-[32px]">
         <div className="flex items-center gap-x-2">
           <Button variant={"ghost"} size={"icon"}>
