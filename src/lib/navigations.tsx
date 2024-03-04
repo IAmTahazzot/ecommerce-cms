@@ -1,6 +1,8 @@
 import type { navList } from "@/components/Sidebar/Sidebar";
+
 import { FaCog, FaTag } from "react-icons/fa";
 import { TbDashboard } from "react-icons/tb";
+import { GoInbox } from "react-icons/go";
 
 // [WARNING]: Currently, the Sidebar component only supports one level of nesting. So, DO NOT ATTMEPT TO ADD MORE THAN ONE LEVEL OF NESTING or it will break the UI.
 export const Navigation: navList[] = [
@@ -15,14 +17,27 @@ export const Navigation: navList[] = [
       {
         name: "Products",
         href: "/products",
-        icon: <FaTag className="w-[17px] h-[17px] rotate-90" />,
+        icon: <FaTag className="h-4 w-4 rotate-90" />,
         children: [
           {
             name: "Add Product",
-            href: "/products/add",
+            href: "/products/new",
+          },
+          {
+            name: "Inventory",
+            href: "/products/inventory",
+          },
+          {
+            name: "Categories",
+            href: "/products/categories",
           },
         ],
       },
+      {
+        name: "Orders",
+        href: "/orders",
+        icon: <GoInbox className="h-4 w-4" />,
+      }
     ],
   },
 
