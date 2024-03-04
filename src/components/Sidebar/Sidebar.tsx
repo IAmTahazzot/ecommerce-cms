@@ -7,6 +7,7 @@ import { useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from 'next/navigation'
+import { useLayout } from "@/hooks/useLayout";
 
 
 export type navItem = {
@@ -40,6 +41,7 @@ export const Sidebar = ({ navigation }: SidebarProps) => {
   const path = usePathname();
   const [activeRoot, setActiveRoot] = useState<number | null>(null);
   const [activeSubmenu, setActiveSubmenu] = useState<number | null>(null);
+  const { sidebar }  = useLayout();
 
   const handleSubMenu = (rootIndex: number, index: number) => {
     setActiveRoot(rootIndex);
@@ -47,7 +49,12 @@ export const Sidebar = ({ navigation }: SidebarProps) => {
   };
 
   return (
-    <aside className="fixed top-0 flex flex-col w-[212px] h-full p-4 z-10 bg-white border-r border-neutral-200">
+    <aside className={
+      cn(
+        'fixed top-0 flex flex-col w-[212px] h-full p-4 z-10 bg-white border-r border-neutral-200 transition-transform',
+        sidebar ? 'translate-x-0' : '-translate-x-full'
+      )
+    }>
       <div className="flex items-center gap-x-2 h-8 mb-4">
         <Image
           src="/placeholders/avatar.png"

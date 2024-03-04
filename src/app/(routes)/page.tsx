@@ -5,7 +5,7 @@ import { AiOutlineRise, AiOutlineFall } from "react-icons/ai";
 
 export default function Home() {
   return (
-    <div className="grid grid-cols-4 gap-6 m-6">
+    <div className="grid grid-cols-4 gap-6">
       <div className="col-start-1 col-end-5">
         <h3 className="text-sm font-semibold">Overview</h3>
       </div>
