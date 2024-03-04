@@ -47,7 +47,7 @@ export const Sidebar = ({ navigation }: SidebarProps) => {
   };
 
   return (
-    <aside className="fixed flex flex-col w-[212px] h-full p-4 z-10 bg-white border-r border-neutral-200">
+    <aside className="fixed top-0 flex flex-col w-[212px] h-full p-4 z-10 bg-white border-r border-neutral-200">
       <div className="flex items-center gap-x-2 h-8 mb-4">
         <Image
           src="/placeholders/avatar.png"
