@@ -4,7 +4,7 @@ const emptyNotificationIcons: string[] = ['(^_^)', '\(o_o)/', '(^-^*)', '(>_<)',
 
 export const NotificationPanel = () => {
   return (
-    <section className="fixed top-0 right-0 h-full flex flex-col gap-y-4 w-[270px] p-4 border-l border-neutral-200">
+    <section className="fixed top-0 right-0 h-full flex flex-col gap-y-4 w-[270px] p-4 border-l border-neutral-200 bg-white">
       <div className="h-8 flex items-center">
         <h3 className="text-sm font-medium">Notification</h3>
       </div>
