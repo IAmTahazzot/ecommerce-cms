@@ -9,7 +9,7 @@ interface Layout {
 
 export const useLayout = create<Layout>((set) => ({
   sidebar: true,
-  notificationPanel: false,
+  notificationPanel: true,
   toggleSidebar: () => set((state) => ({ sidebar: !state.sidebar })),
   toggleNotificationPanel: () => set((state) => ({ notificationPanel: !state.notificationPanel })),
 }))
