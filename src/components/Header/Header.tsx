@@ -21,7 +21,7 @@ export const Header = ({ shops } : HeaderProps) => {
   return (
     <header className={
       cn(
-        'fixed top-0 py-4 px-6 border-b border-neutral-200 bg-white transition-all',
+        'fixed top-0 py-4 px-6 z-[100] border-b border-neutral-200 bg-white transition-all',
         notificationPanel ? 'right-[270px]' : 'right-0',
         sidebar ? 'left-[212px]' : 'left-0',
       )
