@@ -5,6 +5,7 @@ import { Navigation } from "@/lib/navigations";
 import { Header } from "@/components/Header/Header";
 import { NotificationPanel } from "@/components/NotificationPanel/NotificationPanel";
 import { Main } from "./components/Main";
+import { Toaster } from "@/components/ui/sonner";
 
 const getMyShop = async (): Promise<Shop[]> => {
   return new Promise((resolve) => {
@@ -27,6 +28,7 @@ const MainLayout = async ({ children }: { children: React.ReactNode }) => {
       <Sidebar navigation={Navigation} />
       <Main>{children}</Main>
       <NotificationPanel />
+      <Toaster position={'bottom-right'} />
     </div>
   );
 };

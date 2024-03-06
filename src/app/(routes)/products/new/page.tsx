@@ -22,6 +22,7 @@ import { Switch } from '@/components/ui/switch'
 import { Checkbox } from '@/components/ui/checkbox'
 
 import { Variants } from '@/components/Products/ProductVariants'
+import { toast } from 'sonner'
 
 const ProductFormSchema = z.object({
   title: z.string().min(10).max(255),
@@ -49,36 +50,34 @@ const AddProductPage = () => {
   })
 
   const onSubmit = (values: z.infer<typeof ProductFormSchema>) => {
-    // Toast.custom((t) => {
-    //   return (
-    //     <div className='p-4 bg-white rounded-xl max-w-[400px]'>
-    //       <pre className='p-3 bg-slate-800 text-white rounded-xl'>
-    //         <code>{JSON.stringify(values, null, 2)}</code>
-    //       </pre>
-    //     </div>
-    //   )
-    // })
+    toast(`Product ${values.title} has been saved!`, {
+      description: 'You can now view the product in the product list.',
+      position: 'bottom-right',
+      action: {
+        label: 'View product',
+        onClick: () => {
+          console.log('View product clicked')
+        },
+      }
+    })
     console.log(values)
   }
 
   return (
     <>
       {/* BEGIN: PAGE TITLE */}
-      <div className='mt-4 grid grid-cols-6 gap-x-4'>
+      <div className='grid grid-cols-6 gap-x-4'>
         <div className='col-span-4'>
-          <h1 className='text-xl font-bold mb-6'>Add Product</h1>
+          <h1 className='font-bold mb-4'>Add Product</h1>
         </div>
         <div className='col-span-2 flex items-center gap-x-2 justify-end'>
           <Button
             variant={'outline'}
-            size={'lg'}
           >
             Draft
           </Button>
           <Button
             variant={'default'}
-            size={'lg'}
-            className='ml-2'
             onClick={form.handleSubmit(onSubmit)}
           >
             Save
@@ -93,7 +92,7 @@ const AddProductPage = () => {
             {/* BEGIN: LEFT SIDE */}
             <div className='col-span-4'>
               <div>
-                <div className='bg-[--card-background] rounded-xl p-4'>
+                <div className=''>
                   <FormItem>
                     <FormLabel htmlFor='title'>Title</FormLabel>
                     <FormControl>
@@ -287,7 +286,7 @@ const AddProductPage = () => {
 
             {/* BEGIN: RIGHT SIDE */}
             <div className='col-span-2'>
-              <div className='bg-[--card-background] rounded-xl p-4'>
+              <div className='border rounded-xl p-4'>
                 <FormItem className='flex items-center justify-between'>
                   <FormLabel htmlFor='status'>Status</FormLabel>
                   <FormControl>
