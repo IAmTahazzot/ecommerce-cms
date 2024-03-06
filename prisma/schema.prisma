@@ -1,0 +1,192 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Address {
+  addressId     Int     @id @default(autoincrement())
+  userId        Int
+  country       String
+  city          String
+  streetAddress String
+  zipcode       String
+  ip            String?
+  user          User    @relation(fields: [userId], references: [userId])
+}
+
+model CartItem {
+  cartItemId Int       @id @default(autoincrement())
+  cartId     Int
+  productId  Int
+  variantId  Int
+  quantity   Int
+  createdAt  DateTime  @default(now())
+  updatedAt  DateTime?
+  cart       Cart      @relation(fields: [cartId], references: [cartId])
+  product    Product   @relation(fields: [productId], references: [productId])
+  variant    Variant   @relation(fields: [variantId], references: [variantId])
+}
+
+model Cart {
+  cartId    Int        @id @default(autoincrement())
+  userId    Int
+  sessionId String?
+  createdAt DateTime   @default(now())
+  updatedAt DateTime?
+  user      User       @relation(fields: [userId], references: [userId])
+  cartItems CartItem[]
+}
+
+model Category {
+  categoryId   Int       @id @default(autoincrement())
+  categoryUrl  String    @unique
+  categoryName String    @unique
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime?
+  products     Product[]
+}
+
+model Image {
+  imageId   Int      @id @default(autoincrement())
+  productId Int
+  imageUrl  String
+  createdAt DateTime @default(now())
+  product   Product  @relation(fields: [productId], references: [productId])
+}
+
+model Notification {
+  notificationId Int       @id @default(autoincrement())
+  userId         Int
+  storeId        Int
+  body           String
+  title          String
+  createdAt      DateTime  @default(now())
+  updatedAt      DateTime?
+  user           User      @relation(fields: [userId], references: [userId])
+  store          Store     @relation(fields: [storeId], references: [storeId])
+}
+
+model OrderItem {
+  orderItemId Int       @id @default(autoincrement())
+  orderId     Int
+  productId   Int
+  variantId   Int
+  quantity    Int
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime?
+  order       Order     @relation(fields: [orderId], references: [orderId])
+  product     Product   @relation(fields: [productId], references: [productId])
+  variant     Variant   @relation(fields: [variantId], references: [variantId])
+}
+
+model Order {
+  orderId    Int         @id @default(autoincrement())
+  userId     Int
+  storeId    Int
+  status     String      @default("pending")
+  createdAt  DateTime    @default(now())
+  updatedAt  DateTime?
+  user       User        @relation(fields: [userId], references: [userId])
+  store      Store       @relation(fields: [storeId], references: [storeId])
+  orderItems OrderItem[]
+  Payment    Payment[]
+}
+
+model Payment {
+  paymentId     Int       @id @default(autoincrement())
+  orderId       Int
+  amount        Int
+  paymentMethod String?
+  status        String    @default("pending")
+  transactionId String?
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime?
+  order         Order     @relation(fields: [orderId], references: [orderId])
+}
+
+model Product {
+  productId               Int         @id @default(autoincrement())
+  userId                  Int
+  storeId                 Int
+  categoryId              Int
+  title                   String
+  description             String?
+  price                   Float
+  costPerProduct          Float?
+  compareAtPrice          Int?
+  status                  String      @default("active")
+  allowPurchaseOutOfStock Boolean     @default(false)
+  createdAt               DateTime    @default(now())
+  updatedAt               DateTime?
+  user                    User        @relation(fields: [userId], references: [userId])
+  store                   Store       @relation(fields: [storeId], references: [storeId])
+  category                Category    @relation(fields: [categoryId], references: [categoryId])
+  cartItems               CartItem[]
+  orderItems              OrderItem[]
+  variants                Variant[]
+  images                  Image[]
+  Review                  Review[]
+}
+
+model Review {
+  reviewId    Int       @id @default(autoincrement())
+  productId   Int
+  userId      Int
+  reviewLevel String?
+  message     String
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime?
+  product     Product   @relation(fields: [productId], references: [productId])
+  user        User      @relation(fields: [userId], references: [userId])
+}
+
+model Store {
+  storeId       Int            @id
+  userId        Int
+  storeName     String
+  storeUrl      String         @unique
+  createdAt     DateTime       @default(now())
+  updatedAt     DateTime?
+  user          User           @relation(fields: [userId], references: [userId])
+  products      Product[]
+  orders        Order[]
+  notifications Notification[]
+}
+
+model User {
+  userId        Int            @id @default(autoincrement())
+  firstName     String
+  lastName      String
+  email         String         @unique
+  password      String
+  role          String
+  createdAt     DateTime       @default(now())
+  updatedAt     DateTime?
+  addresses     Address[]
+  stores        Store[]
+  products      Product[]
+  orders        Order[]
+  reviews       Review[]
+  carts         Cart[]
+  notifications Notification[]
+}
+
+model Variant {
+  variantId  Int         @id @default(autoincrement())
+  productId  Int
+  size       String?
+  color      String?
+  material   String?
+  inventory  Int         @default(0)
+  price      Int
+  imageUrl   String?
+  createdAt  DateTime    @default(now())
+  updatedAt  DateTime?
+  product    Product     @relation(fields: [productId], references: [productId])
+  cartItems  CartItem[]
+  orderItems OrderItem[]
+}
