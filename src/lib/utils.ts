@@ -52,3 +52,8 @@ export function generateVariants(options: Record<string, string[]>): Variant[] {
 
   return result;
 }
+
+export function extractStoreUrl(host: string) : string | null {
+  const parts = host.split('.');
+  return parts.length > 1 ? parts[0] : null;
+}

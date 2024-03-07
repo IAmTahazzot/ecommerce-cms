@@ -2,7 +2,7 @@
 
 import { PiSidebarDuotone } from "react-icons/pi";
 import { IoMdNotificationsOutline } from "react-icons/io";
-import { VscColorMode } from 'react-icons/vsc'
+import { VscColorMode } from 'react-icons/vsc';
 
 import { Shop, SwitchShop } from "./SwitchShop";
 import { Button } from "../ui/button";

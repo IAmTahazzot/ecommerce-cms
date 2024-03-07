@@ -1,9 +1,21 @@
+// import { headers } from 'next/headers'
+'use client'
+
 import { CounterCard } from "@/components/Widgets/CounterCard";
 import { SalesChart } from "@/components/Widgets/SalesChart";
 import { TrafficView } from "@/components/Widgets/TrafficView";
 import { AiOutlineRise, AiOutlineFall } from "react-icons/ai";
+import { extractStoreUrl } from '@/lib/utils';
 
+// const headersList = headers()
+// const storeUrl = extractStoreUrl(headersList.get('host') || '')
+
+// if (!storeUrl) {
+//   throw new Error('Invalid store URL.')
+// }
 export default function Home() {
+
+
   return (
     <div className="grid grid-cols-4 gap-6">
       <div className="col-start-1 col-end-5">
