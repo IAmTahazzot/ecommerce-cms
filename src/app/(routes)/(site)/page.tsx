@@ -32,9 +32,11 @@ const UnityShopMainPage = () => {
           <div className="flex items-center gap-x-2">
             {isSignedIn ? (
               <div className="flex items-center gap-x-2">
-                <Button variant={"outline"} size={"sm"}>
-                  Open Dashboard
-                </Button>
+                <Link href="/select-store">
+                  <Button variant={"outline"} size={"sm"}>
+                    Open Dashboard
+                  </Button>
+                </Link>
                 <SignOutButton>
                   <Button variant={"default"} size={"sm"}>
                     Sign Out
