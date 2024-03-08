@@ -1,16 +1,10 @@
-/*
-  Warnings:
-
-  - You are about to drop the `Profile` table. If the table is not empty, all the data it contains will be lost.
-
-*/
--- DropTable
-DROP TABLE "Profile";
+-- CreateEnum
+CREATE TYPE "Role" AS ENUM ('ADMIN', 'USER', 'STORE_OWNER');
 
 -- CreateTable
 CREATE TABLE "Address" (
     "addressId" SERIAL NOT NULL,
-    "userId" INTEGER NOT NULL,
+    "userId" TEXT NOT NULL,
     "country" TEXT NOT NULL,
     "city" TEXT NOT NULL,
     "streetAddress" TEXT NOT NULL,
@@ -36,7 +30,7 @@ CREATE TABLE "CartItem" (
 -- CreateTable
 CREATE TABLE "Cart" (
     "cartId" SERIAL NOT NULL,
-    "userId" INTEGER NOT NULL,
+    "userId" TEXT NOT NULL,
     "sessionId" TEXT,
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updatedAt" TIMESTAMP(3),
@@ -68,7 +62,7 @@ CREATE TABLE "Image" (
 -- CreateTable
 CREATE TABLE "Notification" (
     "notificationId" SERIAL NOT NULL,
-    "userId" INTEGER NOT NULL,
+    "userId" TEXT NOT NULL,
     "storeId" INTEGER NOT NULL,
     "body" TEXT NOT NULL,
     "title" TEXT NOT NULL,
@@ -94,7 +88,7 @@ CREATE TABLE "OrderItem" (
 -- CreateTable
 CREATE TABLE "Order" (
     "orderId" SERIAL NOT NULL,
-    "userId" INTEGER NOT NULL,
+    "userId" TEXT NOT NULL,
     "storeId" INTEGER NOT NULL,
     "status" TEXT NOT NULL DEFAULT 'pending',
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
@@ -120,7 +114,7 @@ CREATE TABLE "Payment" (
 -- CreateTable
 CREATE TABLE "Product" (
     "productId" SERIAL NOT NULL,
-    "userId" INTEGER NOT NULL,
+    "userId" TEXT NOT NULL,
     "storeId" INTEGER NOT NULL,
     "categoryId" INTEGER NOT NULL,
     "title" TEXT NOT NULL,
@@ -140,7 +134,7 @@ CREATE TABLE "Product" (
 CREATE TABLE "Review" (
     "reviewId" SERIAL NOT NULL,
     "productId" INTEGER NOT NULL,
-    "userId" INTEGER NOT NULL,
+    "userId" TEXT NOT NULL,
     "reviewLevel" TEXT,
     "message" TEXT NOT NULL,
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
@@ -152,7 +146,7 @@ CREATE TABLE "Review" (
 -- CreateTable
 CREATE TABLE "Store" (
     "storeId" INTEGER NOT NULL,
-    "userId" INTEGER NOT NULL,
+    "userId" TEXT NOT NULL,
     "storeName" TEXT NOT NULL,
     "storeUrl" TEXT NOT NULL,
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
@@ -163,12 +157,12 @@ CREATE TABLE "Store" (
 
 -- CreateTable
 CREATE TABLE "User" (
-    "userId" SERIAL NOT NULL,
+    "userId" TEXT NOT NULL,
     "firstName" TEXT NOT NULL,
     "lastName" TEXT NOT NULL,
     "email" TEXT NOT NULL,
-    "password" TEXT NOT NULL,
-    "role" TEXT NOT NULL,
+    "password" TEXT,
+    "role" "Role" NOT NULL DEFAULT 'USER',
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updatedAt" TIMESTAMP(3),
 

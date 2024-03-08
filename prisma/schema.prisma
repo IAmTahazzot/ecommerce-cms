@@ -9,7 +9,7 @@ datasource db {
 
 model Address {
   addressId     Int     @id @default(autoincrement())
-  userId        Int
+  userId        String
   country       String
   city          String
   streetAddress String
@@ -33,7 +33,7 @@ model CartItem {
 
 model Cart {
   cartId    Int        @id @default(autoincrement())
-  userId    Int
+  userId    String
   sessionId String?
   createdAt DateTime   @default(now())
   updatedAt DateTime?
@@ -60,7 +60,7 @@ model Image {
 
 model Notification {
   notificationId Int       @id @default(autoincrement())
-  userId         Int
+  userId         String
   storeId        Int
   body           String
   title          String
@@ -85,7 +85,7 @@ model OrderItem {
 
 model Order {
   orderId    Int         @id @default(autoincrement())
-  userId     Int
+  userId     String 
   storeId    Int
   status     String      @default("pending")
   createdAt  DateTime    @default(now())
@@ -110,7 +110,7 @@ model Payment {
 
 model Product {
   productId               Int         @id @default(autoincrement())
-  userId                  Int
+  userId                  String 
   storeId                 Int
   categoryId              Int
   title                   String
@@ -135,7 +135,7 @@ model Product {
 model Review {
   reviewId    Int       @id @default(autoincrement())
   productId   Int
-  userId      Int
+  userId      String 
   reviewLevel String?
   message     String
   createdAt   DateTime  @default(now())
@@ -145,8 +145,8 @@ model Review {
 }
 
 model Store {
-  storeId       Int            @id
-  userId        Int
+  storeId       Int            @id @default(autoincrement())
+  userId        String 
   storeName     String
   storeUrl      String         @unique
   createdAt     DateTime       @default(now())
@@ -157,13 +157,19 @@ model Store {
   notifications Notification[]
 }
 
+enum Role {
+  ADMIN
+  USER
+  STORE_OWNER
+}
+
 model User {
-  userId        Int            @id @default(autoincrement())
+  userId        String         @id 
   firstName     String
   lastName      String
   email         String         @unique
-  password      String
-  role          String
+  password      String?
+  role          Role           @default(USER)
   createdAt     DateTime       @default(now())
   updatedAt     DateTime?
   addresses     Address[]
