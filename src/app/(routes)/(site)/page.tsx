@@ -63,7 +63,7 @@ const UnityShopMainPage = () => {
         </header>
 
         <section className="flex flex-col gap-y-4 mt-32 text-center">
-          <div className="flex items-center justify-center w-fit mx-auto py-1 px-3 gap-2 rounded-full bg-slate-100 border border-slate-200 text-sm">
+          <div className="flex items-center justify-center w-fit mx-auto py-1 px-3 gap-2 rounded-full bg-slate-100 border border-slate-200 text-xs">
             <span>🎉</span>
             <span>Explore more by signing up</span>
           </div>
