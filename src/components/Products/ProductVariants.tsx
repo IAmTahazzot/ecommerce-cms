@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 
 import { cn } from '@/lib/utils'
 
@@ -19,7 +19,7 @@ export interface Variants {
 }
 
 interface VariantsProps {
-  handleData?: () => void
+  handleData: (variants: Variants) => void
 }
 
 export const Variants = ({ handleData }: VariantsProps) => {
@@ -29,7 +29,7 @@ export const Variants = ({ handleData }: VariantsProps) => {
     sizes: [],
     colors: [],
     materials: [],
-  })
+  });
 
   const [variantsUI, setVariantsUI] = useState<{ id: number }[]>([])
 
@@ -37,7 +37,9 @@ export const Variants = ({ handleData }: VariantsProps) => {
     setVariants((prev) => ({
       ...prev,
       [type]: [...values],
-    }))
+    }));
+
+    handleData(variants)
   }
 
   const addNewVariant = () => {

@@ -1,31 +1,40 @@
-import { Product, columns } from "@/components/Products/Columns";
+import { ProductProps, columns } from "@/components/Products/Columns";
+import { Product }  from '@prisma/client'
 import { ProductsTable } from "@/components/Products/ProductsTable";
+import { db } from "@/db/db";
+import { currentUser } from "@clerk/nextjs";
+import { ErrorTemplate } from "@/components/Error/ErrorTemplate";
 
-async function getProducts(): Promise<Product[]> {
-  return [
-    {
-      id: "1",
-      name: "My Watch",
-      imageUrl: "a.webp",
-      price: 100,
-      inventory: 10,
-      status: "Active",
-      category: "Apple watch",
-    },
-    {
-      id: "2",
-      name: "Watch 2",
-      imageUrl: "b.avif",
-      price: 300,
-      inventory: 30,
-      status: "Inactive",
-      category: "Fashion",
-    },
-  ];
-}
+const ProductPage = async ({ params }: {params: { shopUrl: string }}) => {
+  const store = await db.store.findFirst({
+    where: {
+      storeUrl: params.shopUrl
+    }
+  });
 
-const ProductPage = async () => {
-  const products = await getProducts();
+  if (!store) {
+    return (
+      <ErrorTemplate type={'No store found'} />
+    )
+  }
+
+  const user = await currentUser();
+
+  if (!user) {
+    return (
+      <ErrorTemplate type={'Unauthorized'} />
+    )
+  }
+
+  const products: ProductProps[] = await db.product.findMany( {
+    where: {
+      storeId: store.storeId
+    },
+    include: {
+      images: true,
+      category: true
+    }
+  })
 
   return (
     <div>

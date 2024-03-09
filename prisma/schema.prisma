@@ -48,6 +48,8 @@ model Category {
   createdAt    DateTime  @default(now())
   updatedAt    DateTime?
   products     Product[]
+  storeUrl     String
+  store        Store     @relation(fields: [storeUrl], references: [storeUrl])
 }
 
 model Image {
@@ -55,7 +57,7 @@ model Image {
   productId Int
   imageUrl  String
   createdAt DateTime @default(now())
-  product   Product  @relation(fields: [productId], references: [productId])
+  product   Product  @relation(fields: [productId], references: [productId], onDelete: Cascade)
 }
 
 model Notification {
@@ -85,7 +87,7 @@ model OrderItem {
 
 model Order {
   orderId    Int         @id @default(autoincrement())
-  userId     String 
+  userId     String
   storeId    Int
   status     String      @default("pending")
   createdAt  DateTime    @default(now())
@@ -110,12 +112,13 @@ model Payment {
 
 model Product {
   productId               Int         @id @default(autoincrement())
-  userId                  String 
+  userId                  String
   storeId                 Int
   categoryId              Int
   title                   String
   description             String?
   price                   Float
+  inventory               Int?
   costPerProduct          Float?
   compareAtPrice          Int?
   status                  String      @default("active")
@@ -135,7 +138,7 @@ model Product {
 model Review {
   reviewId    Int       @id @default(autoincrement())
   productId   Int
-  userId      String 
+  userId      String
   reviewLevel String?
   message     String
   createdAt   DateTime  @default(now())
@@ -146,7 +149,7 @@ model Review {
 
 model Store {
   storeId       Int            @id @default(autoincrement())
-  userId        String 
+  userId        String
   storeName     String
   storeUrl      String         @unique
   createdAt     DateTime       @default(now())
@@ -155,6 +158,7 @@ model Store {
   products      Product[]
   orders        Order[]
   notifications Notification[]
+  Category      Category[]
 }
 
 enum Role {
@@ -164,7 +168,7 @@ enum Role {
 }
 
 model User {
-  userId        String         @id 
+  userId        String         @id
   firstName     String
   lastName      String
   email         String         @unique
@@ -190,9 +194,10 @@ model Variant {
   inventory  Int         @default(0)
   price      Int
   imageUrl   String?
+  sku        String?
   createdAt  DateTime    @default(now())
   updatedAt  DateTime?
-  product    Product     @relation(fields: [productId], references: [productId])
+  product    Product     @relation(fields: [productId], references: [productId], onDelete: Cascade)
   cartItems  CartItem[]
   orderItems OrderItem[]
 }

@@ -9,6 +9,7 @@ import { db } from "@/db/db";
 import { currentUser } from "@clerk/nextjs";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
+import { Toaster } from '@/components/ui/sonner'
 
 const getMyShop = async (): Promise<Shop[] | { error: string, description?: string }> => {
   const user = await currentUser();
@@ -80,6 +81,7 @@ const MainLayout = async ({ params, children }: MainLayoutProps) => {
       <Sidebar navigation={Navigation} activeShopUrl={params.shopUrl} />
       <Main>{children}</Main>
       <NotificationPanel />
+      <Toaster position="bottom-right" />
     </div>
   );
 };

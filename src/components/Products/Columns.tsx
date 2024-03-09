@@ -4,7 +4,6 @@ import { cn } from '@/lib/utils'
 
 import { IoMdCheckmarkCircleOutline } from 'react-icons/io'
 import { RxCrossCircled } from 'react-icons/rx'
-import { PiArrowUpDuotone } from 'react-icons/pi'
 
 import {
   DropdownMenu,
@@ -39,144 +38,145 @@ import { Checkbox } from '@/components/ui/checkbox'
 import Image from 'next/image'
 import Link from 'next/link'
 import { DataTableColumnHeader } from './ProductsTableHeader' 
+import { Image as ProductImage, Product, Category }  from '@prisma/client'
 
-export type Product = {
-  id: string
-  name: string
-  imageUrl: string
-  price: number
-  inventory: number
-  category: string
-  status: 'Active' | 'Inactive'
+export interface ProductProps extends Product {
+  images: ProductImage[],
+  category: Category
 }
 
-export const columns: ColumnDef<Product>[] = [
+export const columns: ColumnDef<ProductProps>[] = [
   {
-    accessorKey: 'select',
+    accessorKey: "select",
     header: ({ table }) => (
       <Checkbox
         checked={
           table.getIsAllPageRowsSelected() ||
-          (table.getIsSomePageRowsSelected() && 'indeterminate')
+          (table.getIsSomePageRowsSelected() && "indeterminate")
         }
         onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
-        aria-label='Select all'
-        className='translate-y-[2px]'
+        aria-label="Select all"
+        className="translate-y-[2px]"
       />
     ),
     cell: ({ row }) => (
       <Checkbox
         checked={row.getIsSelected()}
         onCheckedChange={(value) => row.toggleSelected(!!value)}
-        aria-label='Select row'
+        aria-label="Select row"
       />
     ),
     enableSorting: false,
     enableHiding: false,
   },
   {
-    accessorKey: 'id',
-    header: 'ID',
+    accessorKey: "productId",
+    header: "ID",
   },
   {
-    accessorKey: 'name',
+    accessorKey: "name",
     header: ({ column }) => (
-      <DataTableColumnHeader column={column} title='Product' /> 
+      <DataTableColumnHeader column={column} title="Product" />
     ),
     cell: ({ row }) => {
       return (
-        <div className='flex items-center gap-x-2'>
-          <div className='relative border h-10 w-10 rounded-lg overflow-hidden'>
+        <div className="flex items-center gap-x-2">
+           <div className='relative border h-10 w-10 rounded-lg overflow-hidden'>
             <Image
-              src={'/img/trash/' + row.original.imageUrl}
-              alt={row.original.name}
+              src={'https://utfs.io/f/' + row.original.images[0].imageUrl}
+              alt={row.original.title}
               fill
               sizes='100px'
               className='w-10 h-10 rounded-md object-cover'
             />
           </div>
-          <div className='flex flex-col'>
-            <Link href={`/products/${row.original.id}`}>
-              <span className='font-semibold hover:underline'>
-                {row.original.name}
+          <div className="flex flex-col">
+            <Link href={`/products/${row.original.productId}`}>
+              <span className="font-semibold hover:underline">
+                {row.original.title}
               </span>
             </Link>
           </div>
         </div>
-      )
+      );
     },
   },
   {
-    accessorKey: 'price',
-    header: ({ column } ) => (
-      <DataTableColumnHeader column={column} title='Price' />
+    accessorKey: "price",
+    header: ({ column }) => (
+      <DataTableColumnHeader column={column} title="Price" />
     ),
   },
   {
-    accessorKey: 'inventory',
+    accessorKey: "inventory",
     header: ({ column }) => (
-      <DataTableColumnHeader column={column} title='Inventory' />
+      <DataTableColumnHeader column={column} title="Inventory" />
     ),
   },
   {
-    accessorKey: 'status',
+    accessorKey: "status",
     header: ({ column }) => (
-      <DataTableColumnHeader column={column} title='Status' />
+      <DataTableColumnHeader column={column} title="Status" />
     ),
     cell: ({ row }) => {
-      const status = row.original.status
-      const icon = status === 'Active' ? (
-        <IoMdCheckmarkCircleOutline className='h-4 w-4' />
-      ) : (
-        <RxCrossCircled className='h-4 w-4' />
-      )
+      const status = row.original.status;
+      const icon =
+        status.toLocaleLowerCase() === "active" ? (
+          <IoMdCheckmarkCircleOutline className="h-4 w-4" />
+        ) : (
+          <RxCrossCircled className="h-4 w-4" />
+        );
 
       return (
-        <div className='flex space-x-2 items-center' >
+        <div className="flex space-x-2 items-center">
           {icon}
           <span>{row.original.status}</span>
         </div>
-      )
+      );
     },
   },
   {
-    accessorKey: 'category',
+    accessorKey: "category",
     header: ({ column }) => (
-      <DataTableColumnHeader column={column} title='Category' />
+      <DataTableColumnHeader column={column} title="Category" />
     ),
+    cell: ({ row }) => {
+      return (
+        <div className="flex items-center gap-x-2">
+          <span>{row.original.category.categoryName}</span>
+        </div>
+      );
+    },
   },
   {
-    id: 'actions',
+    id: "actions",
     enableHiding: false,
-    header: 'Actions',
+    header: "Actions",
     cell: ({ row }) => {
       return (
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
-            <Button
-              variant='ghost'
-              className='h-8 w-8 p-0'
-            >
-              <span className='sr-only'>Open menu</span>
-              <DotsHorizontalIcon className='h-4 w-4' />
+            <Button variant="ghost" className="h-8 w-8 p-0">
+              <span className="sr-only">Open menu</span>
+              <DotsHorizontalIcon className="h-4 w-4" />
             </Button>
           </DropdownMenuTrigger>
-          <DropdownMenuContent align='end'>
+          <DropdownMenuContent align="end">
             <DropdownMenuItem
-              className='curosr-pointer'
+              className="curosr-pointer"
               onClick={() => {
-                console.log(row)
+                console.log(row);
               }}
             >
-              {' '}
-              Edit product{' '}
+              {" "}
+              Edit product{" "}
             </DropdownMenuItem>
-            <DropdownMenuItem className='text-rose-500 font-bold'>
+            <DropdownMenuItem className="text-rose-500 font-bold">
               Delete product
             </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
-      )
+      );
     },
   },
-]
+];

@@ -27,6 +27,7 @@
     "@radix-ui/react-switch": "^1.0.3",
     "@tanstack/react-table": "^8.13.2",
     "@tinymce/tinymce-react": "^4.3.2",
+    "@uploadthing/react": "^6.3.4",
     "chart.js": "^4.4.2",
     "class-variance-authority": "^0.7.0",
     "clsx": "^2.1.0",
@@ -42,6 +43,7 @@
     "sonner": "^1.4.3",
     "tailwind-merge": "^2.2.1",
     "tailwindcss-animate": "^1.0.7",
+    "uploadthing": "^6.5.2",
     "zod": "^3.22.4",
     "zustand": "^4.5.2"
   },

@@ -1,6 +1,5 @@
 'use client'
 
-import { Button } from '@/components/ui/button'
 import * as React from 'react'
 
 import {
@@ -24,6 +23,7 @@ import {
   TableRow,
 } from '@/components/ui/table'
 import { DataTableToolbar } from './ProductsTableToolbar'
+import { Button } from '@/components/ui/button'
 
 interface ProductsTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[]
