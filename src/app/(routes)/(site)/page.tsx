@@ -1,20 +1,25 @@
-'use client'
-
-import Link from "next/link";
-
-import { VscColorMode } from 'react-icons/vsc';
-
 import { Container } from "@/components/Container";
 import { Button } from "@/components/ui/button";
 import { CoverImage } from "./components/CoverImage";
-import { useUser, SignOutButton } from '@clerk/nextjs'
-import { SiteSkeleton } from "./components/SiteSkeleton";
+import { HeaderChunk } from "./components/HeaderChunk";
+import { currentUser } from "@clerk/nextjs";
+import { db } from "@/db/db";
+import { GetStarted } from "./components/GetStarted";
 
-const UnityShopMainPage = () => {
-  const { isLoaded, isSignedIn, user } = useUser();
+const UnityShopMainPage = async () => {
+  const user = await currentUser();
+  let storeUrl: string = "";
 
-  if (!isLoaded) {
-    return <SiteSkeleton />;
+  if (user) {
+    const store = await db.store.findFirst({
+      where: {
+        userId: user.id,
+      },
+    });
+
+    if (store) {
+      storeUrl = store.storeUrl;
+    }
   }
 
   return (
@@ -29,39 +34,7 @@ const UnityShopMainPage = () => {
               </span>
             </h1>
           </div>
-          <div className="flex items-center gap-x-2">
-            {isSignedIn ? (
-              <div className="flex items-center gap-x-2">
-                <Link href="/select-store">
-                  <Button variant={"outline"} size={"sm"}>
-                    Open Dashboard
-                  </Button>
-                </Link>
-                <SignOutButton>
-                  <Button variant={"default"} size={"sm"}>
-                    Sign Out
-                  </Button>
-                </SignOutButton>
-              </div>
-            ) : (
-              <div className="flex items-center gap-x-2">
-                <Link href="/sign-in">
-                  <Button variant={"default"} size={"sm"}>
-                    Sign In
-                  </Button>
-                </Link>
-                <Link href="/sign-up">
-                  <Button variant={"outline"} size={"sm"}>
-                    Sign Up
-                  </Button>
-                </Link>
-              </div>
-            )}
-
-            <Button variant={"ghost"} size={"icon"}>
-              <VscColorMode className="h-[18px] w-[18px] rotate-45" />
-            </Button>
-          </div>
+          <HeaderChunk storeUrl={storeUrl} />
         </header>
 
         <section className="flex flex-col gap-y-4 mt-32 text-center">
@@ -73,13 +46,19 @@ const UnityShopMainPage = () => {
             Power Your Vision: <span className="rounded">UnityShop </span>CMS,
             Your Digital Shop Management
           </h1>
-          <div className="flex items-center justify-center gap-3 mt-8">
-            <Button variant={"default"} size={"lg"} className="h-12">
-              Get Started
-            </Button>
-            <Button variant={"outline"} size={"lg"} className="h-12">
-              Learn More
-            </Button>
+          <div className="h-12">
+            {user ? (
+              <GetStarted storeUrl={storeUrl} />
+            ) : (
+              <div className="flex items-center justify-center gap-3 mt-8">
+                <Button variant={"default"} size={"lg"} className="h-12">
+                  Get Started
+                </Button>
+                <Button variant={"outline"} size={"lg"} className="h-12">
+                  Learn More
+                </Button>
+              </div>
+            )}
           </div>
         </section>
 

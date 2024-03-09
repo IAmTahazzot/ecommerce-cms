@@ -97,7 +97,7 @@ export const NewStoreForm = ({ user }: NewStoreFormProps) => {
           position: "bottom-center",
         });
 
-          router.push(`/store/${storeData.store.storeUrl}`);
+         router.push(`/${storeData.store.storeUrl}`);
       }
     } catch (error) {
       toast("An error occurred while creating your store.", {

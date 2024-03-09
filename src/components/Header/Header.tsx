@@ -13,15 +13,16 @@ import { cn } from "@/lib/utils";
 
 interface HeaderProps {
   shops: Shop[];
+  activeShopUrl: string;
 }
 
-export const Header = ({ shops } : HeaderProps) => {
+export const Header = ({ shops, activeShopUrl } : HeaderProps) => {
   const { notificationPanel, toggleNotificationPanel, sidebar, toggleSidebar } = useLayout();
 
   return (
     <header className={
       cn(
-        'fixed top-0 py-4 px-6 z-[100] border-b border-neutral-200 bg-white transition-all',
+        'fixed top-0 py-4 px-6 z-10 border-b border-neutral-200 bg-white transition-all',
         notificationPanel ? 'right-[270px]' : 'right-0',
         sidebar ? 'left-[212px]' : 'left-0',
       )
@@ -31,7 +32,7 @@ export const Header = ({ shops } : HeaderProps) => {
           <Button onClick={toggleSidebar} variant={"ghost"} size={"icon"}>
             <PiSidebarDuotone className="h-5 w-5" />
           </Button>
-          <SwitchShop shops={shops} />
+          <SwitchShop shops={shops} activeShopUrl={activeShopUrl} />
         </div>
         <div className="flex items-center">
           <div className='mr-4'>

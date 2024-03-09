@@ -8,6 +8,8 @@ import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from 'next/navigation'
 import { useLayout } from "@/hooks/useLayout";
+import { useUser } from '@clerk/nextjs'
+import { Skeleton } from "../ui/skeleton";
 
 
 export type navItem = {
@@ -24,6 +26,7 @@ export type navList = {
 
 interface SidebarProps {
   navigation?: navList[];
+  activeShopUrl: string
 }
 
 /**
@@ -37,11 +40,13 @@ interface SidebarProps {
  * @todo
  * - Add infinite nesting for submenus
  */
-export const Sidebar = ({ navigation }: SidebarProps) => {
+export const Sidebar = ({ navigation, activeShopUrl }: SidebarProps) => {
   const path = usePathname();
+  const { user, isLoaded } = useUser();
   const [activeRoot, setActiveRoot] = useState<number | null>(null);
   const [activeSubmenu, setActiveSubmenu] = useState<number | null>(null);
-  const { sidebar }  = useLayout();
+  const { sidebar } = useLayout();
+  const shopUrl = 'http://localhost:3000/' + activeShopUrl;
 
   const handleSubMenu = (rootIndex: number, index: number) => {
     setActiveRoot(rootIndex);
@@ -49,21 +54,31 @@ export const Sidebar = ({ navigation }: SidebarProps) => {
   };
 
   return (
-    <aside className={
-      cn(
-        'fixed top-0 flex flex-col w-[212px] h-full p-4 z-10 bg-white border-r border-neutral-200 transition-transform',
-        sidebar ? 'translate-x-0' : '-translate-x-full'
-      )
-    }>
+    <aside
+      className={cn(
+        "fixed top-0 flex flex-col w-[212px] h-full p-4 z-10 bg-white border-r border-neutral-200 transition-transform",
+        sidebar ? "translate-x-0" : "-translate-x-full"
+      )}
+    >
       <div className="flex items-center gap-x-2 h-8 mb-4">
-        <Image
-          src="/placeholders/avatar.png"
-          alt="Avatar"
-          width={24}
-          height={24}
-          className="rounded-full object-fill"
-        />
-        <h3 className="font-medium text-sm">Sarah</h3>
+        {user && isLoaded && (
+          <Image
+            src={user.imageUrl}
+            alt="Avatar"
+            width={24}
+            height={24}
+            className="rounded-full object-fill"
+          />
+        )}
+        {user && isLoaded && (
+          <h3 className="font-medium text-sm">
+            {(user?.firstName || "Unknown user") + " " + (user?.lastName || "")}
+          </h3>
+        )}
+        {!isLoaded && (
+          <Skeleton className="w-6 h-6 rounded-full bg-slate-100" />
+        )}
+        {!isLoaded && <Skeleton className="w-[130px] h-4 rounded-lg bg-slate-100" />}
       </div>
 
       <div className="flex flex-col gap-y-8 mt-6">
@@ -75,7 +90,7 @@ export const Sidebar = ({ navigation }: SidebarProps) => {
               {nav.navItems.map((item, index) => (
                 <li key={index}>
                   <Link
-                    href={item.href}
+                    href={shopUrl + item.href}
                     className={cn(
                       "flex items-center gap-x-2 h-8 text-sm text-neutral-900 px-2 rounded-lg",
                       path === item.href ? "bg-neutral-100" : ""
@@ -119,7 +134,7 @@ export const Sidebar = ({ navigation }: SidebarProps) => {
                       {item.children.map((child, index) => (
                         <li key={index}>
                           <Link
-                            href={child.href}
+                            href={shopUrl + child.href}
                             className={cn(
                               "flex items-center gap-x-2 h-8 pl-16 text-sm text-neutral-900 rounded-lg",
                               path === child.href ? "bg-neutral-100" : ""

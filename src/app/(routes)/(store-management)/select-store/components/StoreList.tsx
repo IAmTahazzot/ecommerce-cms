@@ -90,7 +90,7 @@ export function StoreList({ stores }: StoreListProps) {
             (store) => store.storeName === value
           )?.storeUrl;
           if (storeUrl) {
-            router.push(`/store/${storeUrl}`);
+            router.push(`/${storeUrl}`);
           }
         }}
         variant={"default"}

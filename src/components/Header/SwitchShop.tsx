@@ -5,6 +5,8 @@ import { useState } from "react";
 import { CaretSortIcon, CheckIcon } from "@radix-ui/react-icons";
 import { CiShop } from "react-icons/ci";
 
+import { useRouter } from 'next/navigation'
+
 import { Button } from "@/components/ui/button";
 import {
   Command,
@@ -26,11 +28,13 @@ export interface Shop {
 
 interface SwitchShopProps {
   shops: Shop[];
+  activeShopUrl: string;
 }
 
-export const SwitchShop = ({ shops }: SwitchShopProps) => {
+export const SwitchShop = ({ shops, activeShopUrl }: SwitchShopProps) => {
   const [open, setOpen] = useState(false);
-  const [value, setValue] = useState("");
+  const [value, setValue] = useState(activeShopUrl);
+  const router = useRouter();
 
   return (
     <Popover open={open} onOpenChange={setOpen}>
@@ -74,6 +78,7 @@ export const SwitchShop = ({ shops }: SwitchShopProps) => {
                   }
 
                   setOpen(false);
+                  router.push('/' + getShopId);
                 }}
               >
                 {shop.name}
