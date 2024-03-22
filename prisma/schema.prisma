@@ -42,14 +42,15 @@ model Cart {
 }
 
 model Category {
-  categoryId   Int       @id @default(autoincrement())
-  categoryUrl  String    @unique
-  categoryName String    @unique
-  createdAt    DateTime  @default(now())
+  categoryId   Int         @id @default(autoincrement())
+  categoryUrl  String      @unique
+  categoryName String      @unique
+  createdAt    DateTime    @default(now())
   updatedAt    DateTime?
   products     Product[]
   storeUrl     String
-  store        Store     @relation(fields: [storeUrl], references: [storeUrl])
+  store        Store       @relation(fields: [storeUrl], references: [storeUrl])
+  BillBoard    BillBoard[]
 }
 
 model Image {
@@ -200,4 +201,15 @@ model Variant {
   product    Product     @relation(fields: [productId], references: [productId], onDelete: Cascade)
   cartItems  CartItem[]
   orderItems OrderItem[]
+}
+
+model BillBoard {
+  id         Int       @id @default(autoincrement())
+  title      String
+  subtitle   String
+  imageUrl   String
+  categoryId Int
+  createdAt  DateTime  @default(now())
+  updatedAt  DateTime?
+  category   Category  @relation(fields: [categoryId], references: [categoryId])
 }
