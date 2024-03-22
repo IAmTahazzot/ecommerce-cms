@@ -16,7 +16,7 @@ export const CounterCard = ({
   className,
 }: CounterCardProps) => {
   return (
-    <div className={cn("p-6 space-y-2 rounded-lg bg-neutral-100", className)}>
+    <div className={cn("p-6 space-y-2 rounded-lg bg-neutral-100 dark:bg-neutral-900", className)}>
       <h2 className="text-xs font-normal">{title}</h2>
       <div className="flex items-center justify-between">
         <h1 className="text-[24px] font-bold">

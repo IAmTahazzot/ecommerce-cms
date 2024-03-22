@@ -8,7 +8,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from 'next/navigation'
 import { useLayout } from "@/hooks/useLayout";
-import { useUser } from '@clerk/nextjs'
+import { useUser, UserButton } from '@clerk/nextjs'
 import { Skeleton } from "../ui/skeleton";
 
 
@@ -56,20 +56,12 @@ export const Sidebar = ({ navigation, activeShopUrl }: SidebarProps) => {
   return (
     <aside
       className={cn(
-        "fixed top-0 flex flex-col w-[212px] h-full p-4 z-10 bg-white border-r border-neutral-200 transition-transform",
+        "fixed top-0 flex flex-col w-[212px] h-full p-4 z-10 bg-white dark:bg-neutral-900 border-r border-neutral-200 dark:border-neutral-800 transition-transform",
         sidebar ? "translate-x-0" : "-translate-x-full"
       )}
     >
       <div className="flex items-center gap-x-2 h-8 mb-4">
-        {user && isLoaded && (
-          <Image
-            src={user.imageUrl}
-            alt="Avatar"
-            width={24}
-            height={24}
-            className="rounded-full object-fill"
-          />
-        )}
+        <UserButton />
         {user && isLoaded && (
           <h3 className="font-medium text-sm">
             {(user?.firstName || "Unknown user") + " " + (user?.lastName || "")}
@@ -92,8 +84,8 @@ export const Sidebar = ({ navigation, activeShopUrl }: SidebarProps) => {
                   <Link
                     href={shopUrl + item.href}
                     className={cn(
-                      "flex items-center gap-x-2 h-8 text-sm text-neutral-900 px-2 rounded-lg",
-                      path === item.href ? "bg-neutral-100" : ""
+                      "flex items-center gap-x-2 h-8 text-sm text-neutral-900 dark:text-neutral-200 px-2 rounded-lg",
+                      path === item.href ? "bg-neutral-100 dark:bg-neutral-700" : ""
                     )}
                   >
                     {item.children ? (
@@ -136,8 +128,8 @@ export const Sidebar = ({ navigation, activeShopUrl }: SidebarProps) => {
                           <Link
                             href={shopUrl + child.href}
                             className={cn(
-                              "flex items-center gap-x-2 h-8 pl-16 text-sm text-neutral-900 rounded-lg",
-                              path === child.href ? "bg-neutral-100" : ""
+                              "flex items-center gap-x-2 h-8 pl-16 text-sm text-neutral-900 dark:text-neutral-200 rounded-lg",
+                              path === child.href ? "bg-neutral-100 dark:bg-neutral-800" : ""
                             )}
                           >
                             <span>{child.name}</span>

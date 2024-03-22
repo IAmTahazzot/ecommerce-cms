@@ -94,7 +94,7 @@ export const CategoryTable = <TData, TValue>({
                   {row.getVisibleCells().map((cell) => (
                     <TableCell
                       key={cell.id}
-                      className='text-[13px] text-[#303030]'
+                      className='text-[13px] text-[#303030] dark:text-neutral-300'
                     >
                       {flexRender(
                         cell.column.columnDef.cell,

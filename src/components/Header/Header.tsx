@@ -9,6 +9,7 @@ import { Button } from "../ui/button";
 import { SearchCommands } from "./SearchCommands";
 import { useLayout } from "@/hooks/useLayout";
 import { cn } from "@/lib/utils";
+import { useTheme } from "next-themes";
 
 
 interface HeaderProps {
@@ -18,11 +19,12 @@ interface HeaderProps {
 
 export const Header = ({ shops, activeShopUrl } : HeaderProps) => {
   const { notificationPanel, toggleNotificationPanel, sidebar, toggleSidebar } = useLayout();
+  const { setTheme, theme } = useTheme()
 
   return (
     <header className={
       cn(
-        'fixed top-0 py-4 px-6 z-10 border-b border-neutral-200 bg-white transition-all',
+        'fixed top-0 py-4 px-6 z-10 border-b border-neutral-200 dark:border-neutral-800 bg-white dark:bg-neutral-950 transition-all',
         notificationPanel ? 'right-[270px]' : 'right-0',
         sidebar ? 'left-[212px]' : 'left-0',
       )
@@ -42,7 +44,9 @@ export const Header = ({ shops, activeShopUrl } : HeaderProps) => {
           <Button variant={"ghost"} size={"icon"}>
             <IoMdNotificationsOutline className="h-5 w-5" />
           </Button>
-          <Button variant={"ghost"} size={"icon"}>
+          <Button variant={"ghost"} size={"icon"} onClick={() => {
+            setTheme(theme === 'dark' ? 'light' : 'dark')
+          }}>
             <VscColorMode className="h-[18px] w-[18px] rotate-45" />
           </Button>
           <Button onClick={toggleNotificationPanel} variant={"ghost"} size={"icon"}>

@@ -13,7 +13,7 @@ export default function Home() {
         title="Sales"
         counter={1_000}
         currency="$"
-        className="bg-sky-100"
+        className="bg-sky-100 dark:bg-sky-950"
         details={
           <div className="flex items-center gap-x-1 text-xs">
             <span>-0.80%</span>
@@ -34,7 +34,7 @@ export default function Home() {
       <CounterCard
         title="Customers"
         counter={90}
-        className="bg-sky-100"
+        className="bg-sky-100 dark:bg-sky-950"
         details={
           <div className="flex items-center gap-x-1 text-xs">
             <span>+0.32%</span>
@@ -53,12 +53,12 @@ export default function Home() {
           </div>
         }
       />
-      <div className="row-start-3 col-span-3 p-6 bg-neutral-100 rounded-lg">
+      <div className="row-start-3 col-span-3 p-6 bg-neutral-100 dark:bg-neutral-900 rounded-lg">
         <h3 className='font-semibold text-xs mb-6'>Sales</h3>
         <SalesChart />
       </div>
 
-      <div className='p-6 bg-neutral-100 rounded-lg'>
+      <div className='p-6 bg-neutral-100 dark:bg-neutral-900 rounded-lg'>
         <h3 className='font-semibold text-xs mb-8'>Traffic by country</h3>
         <TrafficView />
       </div>

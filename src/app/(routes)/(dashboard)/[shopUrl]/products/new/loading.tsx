@@ -8,11 +8,11 @@ export default function ProductFormLoading() {
           <h1 className="font-bold mb-4">Add Product</h1>
         </div>
         <div className="col-span-2 flex items-center gap-x-2 justify-end">
-          <Skeleton className="w-24 h-8 bg-neutral-100" />
+          <Skeleton className="w-24 h-8 bg-neutral-100 dark:bg-neutral-800 rounded" />
         </div>
         <div className="col-span-6 h-10"></div>
-        <div className="bg-neutral-100 h-[400px] col-span-4"></div>
-        <div className="bg-neutral-100 h-[200px] col-span-2"></div>
+        <div className="bg-neutral-100 dark:bg-neutral-800 h-[400px] col-span-4 rounded"></div>
+        <div className="bg-neutral-100 dark:bg-neutral-800 h-[200px] col-span-2 rounded"></div>
       </div>
     </div>
   );

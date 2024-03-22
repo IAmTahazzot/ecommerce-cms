@@ -36,6 +36,7 @@ import { Variant, generateVariants } from "@/lib/products";
 import { FaMinus } from "react-icons/fa";
 import { VariantsInventory } from "./VariantsInventory";
 import { usePathname, useRouter } from "next/navigation";
+import { useTheme } from "next-themes";
 
 const ProductFormSchema = z.object({
   title: z.string().min(10).max(255),
@@ -92,6 +93,7 @@ export const ProductForm = ({
   const [deletedFiles, setDeletedFiles] = React.useState<string[]>([]);
   const router = useRouter()
   const path = usePathname()
+  const { theme } = useTheme()
 
   const deleteFile = async (imageUrl: string) => {
     const newFiles = files.filter((file) => file.imageUrl !== imageUrl);
@@ -343,6 +345,8 @@ export const ProductForm = ({
                             "removeformat | help",
                           content_style:
                             "body { font-family:Helvetica,Arial,sans-serif; font-size:14px }",
+                            skin: theme === 'dark' ? 'oxide-dark' : 'oxide',
+                            content_css: theme === 'dark' ? 'dark' : 'default',
                         }}
                       />
                     </FormControl>

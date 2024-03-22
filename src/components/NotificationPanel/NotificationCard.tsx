@@ -24,7 +24,7 @@ interface NotificationCardProps {
 
 export const NotificationCard = ({ type, title, date }: NotificationCardProps) => {
   return (
-    <div className="flex gap-x-2 p-2 hover:bg-neutral-100 rounded-md cursor-pointer">
+    <div className="flex gap-x-2 p-2 hover:bg-neutral-100 hover:dark:bg-neutral-800 rounded-md cursor-pointer">
       <div className="flex items-center justify-center h-5 w-5">
         {React.createElement(NotificationIcon[type])}
       </div>

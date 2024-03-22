@@ -12,7 +12,7 @@ export const NotificationPanel = () => {
   return (
     <section className={
       cn(
-        'fixed top-0 right-0 h-full flex flex-col gap-y-4 w-[270px] p-4 border-l border-neutral-200 bg-white transition-all',
+        'fixed top-0 right-0 h-full flex flex-col gap-y-4 w-[270px] p-4 border-l border-neutral-200 dark:border-neutral-800 bg-white dark:bg-neutral-900 transition-all',
         notificationPanel ? 'translate-x-0' : 'translate-x-full'
       )
     }>
