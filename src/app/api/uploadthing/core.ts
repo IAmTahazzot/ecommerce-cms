@@ -11,12 +11,15 @@ const checkAuth = () => {
   }
 
   return { userId: userId };
-}
+};
 
 export const ourFileRouter = {
-  productImage: f({ image: { maxFileSize: '16MB'}})
+  productImage: f({ image: { maxFileSize: "16MB" } })
     .middleware(() => checkAuth())
-    .onUploadComplete(() => {})
+    .onUploadComplete(() => {}),
+  billboardImage: f({ image: { maxFileSize: "32MB" } })
+    .middleware(() => checkAuth())
+    .onUploadComplete(() => {}),
 } satisfies FileRouter;
 
 export type OurFileRouter = typeof ourFileRouter;

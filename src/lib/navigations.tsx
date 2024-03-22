@@ -3,6 +3,7 @@ import type { navList } from "@/components/Sidebar/Sidebar";
 import { FaCog, FaTag } from "react-icons/fa";
 import { TbDashboard } from "react-icons/tb";
 import { GoInbox } from "react-icons/go";
+import { CiViewBoard } from "react-icons/ci";
 
 // [WARNING]: Currently, the Sidebar component only supports one level of nesting. So, DO NOT ATTMEPT TO ADD MORE THAN ONE LEVEL OF NESTING or it will break the UI.
 export const Navigation: navList[] = [
@@ -32,6 +33,11 @@ export const Navigation: navList[] = [
             href: "/products/category",
           },
         ],
+      },
+      {
+        name: "Billboard",
+        href: "/billboard",
+        icon: <CiViewBoard className="w-5 h-5" />, 
       },
       {
         name: "Orders",

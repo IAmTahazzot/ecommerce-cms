@@ -160,6 +160,7 @@ model Store {
   orders        Order[]
   notifications Notification[]
   Category      Category[]
+  BillBoard     BillBoard[]
 }
 
 enum Role {
@@ -209,7 +210,9 @@ model BillBoard {
   subtitle   String
   imageUrl   String
   categoryId Int
+  storeUrl   String
   createdAt  DateTime  @default(now())
   updatedAt  DateTime?
   category   Category  @relation(fields: [categoryId], references: [categoryId])
+  store      Store     @relation(fields: [storeUrl], references: [storeUrl])
 }
