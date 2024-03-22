@@ -1,0 +1,22 @@
+.navLink {
+   position: relative; 
+}
+
+.navLink::after {
+   content: '';
+   position: absolute;
+   bottom: 1px;
+   left: 0;
+   width: 100%;
+   height: 1px;
+   background-color: #242424;
+   transform: scaleX(0);
+   transform-origin: right;
+   transition: transform 0.5s cubic-bezier(0.42, 0.57, 0.1, 0.93); 
+}
+
+.navLink:hover::after,
+.navLink.active::after {
+   transform: scaleX(1);
+   transform-origin: left;
+}

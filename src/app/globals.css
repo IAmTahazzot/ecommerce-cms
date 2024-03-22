@@ -6,6 +6,21 @@ body {
   height: 100%;
 }
 
+/* Custom Pagination Styles */
+.Custom_swiperActiveBullet {
+  background: linear-gradient(90deg, #b9b9b9 var(--swiperProgress), black var(--swiperProgress), black 100%) !important;
+  width: 30px !important;
+}
+
+.Custom_SwiperBullet {
+  height: 9px;
+  width: 9px;
+  border-radius: 50em;
+  background-color: #cccccc;
+  transition: .3s;
+  cursor: pointer;
+}
+
 @layer base {
   :root {
     --background: 0 0% 100%;

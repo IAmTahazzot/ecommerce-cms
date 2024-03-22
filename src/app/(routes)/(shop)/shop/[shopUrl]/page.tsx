@@ -1,7 +1,19 @@
-export default async function Shop({ params } : { params: { shopUrl: string }}) {
+import Billboards from "@/components/Shop/Billboards/Billboards";
+import Container from "@/components/Shop/Layout/Container";
+import Product from "@/components/Shop/Products/Product";
+
+export default async function Shop({
+  params,
+}: {
+  params: { shopUrl: string };
+}) {
   return (
     <div>
-      <h1>{params.shopUrl}</h1>
+      <Billboards />
+
+      <Container>
+        <Product />
+      </Container>
     </div>
-  )
+  );
 }
