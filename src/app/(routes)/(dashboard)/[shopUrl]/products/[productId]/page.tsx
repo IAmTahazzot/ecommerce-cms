@@ -1,11 +1,10 @@
-import { db } from "@/db/db";
-import { ProductForm } from "./components/ProductForm";
-import { currentUser } from "@clerk/nextjs";
-
-import Link from 'next/link';
 import { Button } from "@/components/ui/button";
+import { db } from "@/db/db";
+import { currentUser } from "@clerk/nextjs";
+import Link from "next/link";
+import { ProductForm } from "../new/components/ProductForm";
 
-const AddProductPage = async ({ params }: { params: { shopUrl: string } }) => {
+const EditProductPage = async ({ params }: { params: { shopUrl: string; productId: string}}) => {
   const user = await currentUser();
 
   if (!user) {
@@ -51,18 +50,34 @@ const AddProductPage = async ({ params }: { params: { shopUrl: string } }) => {
     );
   }
 
+  // getting categories, products and variants
   const categories = await db.category.findMany({
     where: {
       storeUrl: params.shopUrl,
     },
   });
 
+  const product = await db.product.findFirst({
+    where: {
+      storeId: store.storeId,
+      productId: parseInt(params.productId),
+    },
+    include: {
+      variants: true,
+      images: true, 
+    }
+  });
 
   return (
     <div>
-      <ProductForm categories={categories} storeId={store.storeId} userId={user.id} />
+      <ProductForm
+        categories={categories}
+        storeId={store.storeId}
+        userId={user.id}
+        product={product}
+        />
     </div>
-  );
-};
+  )
+}
 
-export default AddProductPage;
+export default EditProductPage

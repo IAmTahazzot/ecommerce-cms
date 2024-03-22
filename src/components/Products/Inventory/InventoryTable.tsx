@@ -21,7 +21,7 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table'
-import { DataTableToolbar } from './ProductsTableToolbar'
+import { DataTableToolbar } from '../ProductsTableToolbar'
 import { Button } from '@/components/ui/button'
 
 interface ProductsTableProps<TData, TValue> {
@@ -29,7 +29,7 @@ interface ProductsTableProps<TData, TValue> {
   data: TData[]
 }
 
-export const ProductsTable = <TData, TValue>({
+export const InventoryTable = <TData, TValue>({
   columns,
   data,
 }: ProductsTableProps<TData, TValue>) => {

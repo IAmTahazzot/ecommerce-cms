@@ -28,8 +28,8 @@ export const Navigation: navList[] = [
             href: "/products/inventory",
           },
           {
-            name: "Categories",
-            href: "/products/categories",
+            name: "Category",
+            href: "/products/category",
           },
         ],
       },

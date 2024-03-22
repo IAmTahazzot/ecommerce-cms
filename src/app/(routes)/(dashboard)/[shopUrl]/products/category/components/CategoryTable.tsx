@@ -21,18 +21,18 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table'
-import { DataTableToolbar } from './ProductsTableToolbar'
+import { DataTableToolbar } from './CategoryTableToolbar'
 import { Button } from '@/components/ui/button'
 
-interface ProductsTableProps<TData, TValue> {
+interface CategoryTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[]
   data: TData[]
 }
 
-export const ProductsTable = <TData, TValue>({
+export const CategoryTable = <TData, TValue>({
   columns,
   data,
-}: ProductsTableProps<TData, TValue>) => {
+}: CategoryTableProps<TData, TValue>) => {
   const [sorting, setSorting] = React.useState<SortingState>([])
   const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
     []
@@ -106,10 +106,7 @@ export const ProductsTable = <TData, TValue>({
               ))
             ) : (
               <TableRow>
-                <TableCell
-                  colSpan={columns.length}
-                  className='h-24 text-center'
-                >
+                <TableCell colSpan={columns.length} className='h-24 text-center'>
                   No results.
                 </TableCell>
               </TableRow>

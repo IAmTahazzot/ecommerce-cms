@@ -24,14 +24,17 @@ interface CategoriesDropdownPros {
     categoryName: string,
   }[],
   onSelect: (categoryId: number) => void,
+  activeCategoryId?: string
 }
 
 export function CategoriesDropdown({
   categories,
-  onSelect
+  onSelect,
+  activeCategoryId
 }: CategoriesDropdownPros) {
+  const activeCategoryName = categories.find((category) => category.categoryId === Number(activeCategoryId))?.categoryName
   const [open, setOpen] = React.useState(false)
-  const [value, setValue] = React.useState<string | number>("")
+  const [value, setValue] = React.useState<string | number>(activeCategoryName?.toLowerCase() || "")
 
   return (
     <Popover open={open} onOpenChange={setOpen}>

@@ -1,13 +1,13 @@
-'use client'
+"use client";
 
-import * as React from 'react'
+import * as React from "react";
 
-import { z } from 'zod'
-import { zodResolver } from '@hookform/resolvers/zod'
-import { useForm } from 'react-hook-form'
-import Image from 'next/image'
+import { z } from "zod";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useForm } from "react-hook-form";
+import Image from "next/image";
 
-import { Button } from '@/components/ui/button'
+import { Button } from "@/components/ui/button";
 import {
   Form,
   FormControl,
@@ -16,43 +16,62 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
-} from '@/components/ui/form'
-import { Input } from '@/components/ui/input'
-import { Editor } from '@tinymce/tinymce-react'
-import { Switch } from '@/components/ui/switch'
-import { Checkbox } from '@/components/ui/checkbox'
+} from "@/components/ui/form";
+import { Input } from "@/components/ui/input";
+import { Editor } from "@tinymce/tinymce-react";
+import { Switch } from "@/components/ui/switch";
+import { Checkbox } from "@/components/ui/checkbox";
 
-import { Variants } from '@/components/Products/ProductVariants'
-import { toast } from 'sonner'
-import { FileUpload } from '@/components/Upload/FileUpload'
-import { Category, Product } from '@prisma/client'
-import { CategoriesDropdown } from './CategoriesDropdown'
-import { Variant, generateVariants } from '@/lib/products'
-import { FaMinus } from 'react-icons/fa'
+import { Variants } from "@/components/Products/ProductVariants";
+import { toast } from "sonner";
+import { FileUpload } from "@/components/Upload/FileUpload";
+import {
+  type Category,
+  type Product,
+  type Variant as VariantType,
+  type Image as ImageType,
+} from "@prisma/client";
+import { CategoriesDropdown } from "./CategoriesDropdown";
+import { Variant, generateVariants } from "@/lib/products";
+import { FaMinus } from "react-icons/fa";
+import { VariantsInventory } from "./VariantsInventory";
+import { usePathname, useRouter } from "next/navigation";
 
 const ProductFormSchema = z.object({
   title: z.string().min(10).max(255),
   description: z.string().min(50).max(200000),
-  categoryId: z.string().refine(value => { return value !== '' }, { message: 'Please select a category.' }),
+  categoryId: z.string().refine(
+    (value) => {
+      return value !== "";
+    },
+    { message: "Please select a category." }
+  ),
   status: z.boolean(),
-  price: z.string().min(0),
-  inventory: z.number().min(1),
-  compareAtPrice: z.string().min(0),
-  costPerItem: z.string().min(0),
+  price: z.number().min(1),
+  inventory: z.number().min(0),
+  compareAtPrice: z.number().min(0),
+  costPerItem: z.number().min(0),
   alwaysAvailable: z.boolean().default(false).optional(),
-})
+});
 
-interface NewProductFormProps {
-  categories: Category[],
-  userId: string,
-  storeId: number,
+type ProductProps = Product & {
+  variants: VariantType[];
+  images: ImageType[];
+};
+
+interface ProductFormProps {
+  categories: Category[];
+  userId: string;
+  storeId: number;
+  product?: ProductProps | null;
 }
 
-export const NewProductForm = ({
+export const ProductForm = ({
   categories,
   userId,
   storeId,
-}: NewProductFormProps) => {
+  product,
+}: ProductFormProps) => {
   const transformCategories = categories.map((category) => {
     return {
       categoryId: category.categoryId,
@@ -66,22 +85,97 @@ export const NewProductForm = ({
       imageUrl: string;
     }[]
   >([]);
-
   const [variants, setVariants] = React.useState<Variants>();
+  const [variantsInventory, setVariantsInventory] =
+    React.useState<Record<string, string[]>>();
   const [saving, setSaving] = React.useState<boolean>(false);
+  const [deletedFiles, setDeletedFiles] = React.useState<string[]>([]);
+  const router = useRouter()
+  const path = usePathname()
+
+  const deleteFile = async (imageUrl: string) => {
+    const newFiles = files.filter((file) => file.imageUrl !== imageUrl);
+    setFiles(newFiles);
+    try {
+      const response = await fetch('/api/products/deleteImages', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ imageUrl })
+      })
+
+      if (response.ok) {
+        toast('Image has been deleted!')
+      }
+    } catch (error) {
+      toast('An error occurred while deleting the image.')
+    }
+  }
+
+  React.useEffect(() => {
+    const extractVariants = (existingVariants: VariantType[]) => {
+      const variantsData = {
+        sizes: new Set<string>(),
+        colors: new Set<string>(),
+        materials: new Set<string>(),
+      };
+
+      existingVariants.forEach((variant) => {
+        if (variant.size) {
+          variantsData.sizes.add(variant.size);
+        }
+
+        if (variant.color) {
+          variantsData.colors.add(variant.color);
+        }
+
+        if (variant.material) {
+          variantsData.materials.add(variant.material);
+        }
+      });
+
+      setVariants({
+        sizes: Array.from(variantsData.sizes).map((size) => ({
+          id: size,
+          value: size,
+        })),
+        colors: Array.from(variantsData.colors).map((color) => ({
+          id: color,
+          value: color,
+        })),
+        materials: Array.from(variantsData.materials).map((material) => ({
+          id: material,
+          value: material,
+        })),
+      });
+    };
+
+    if (product) {
+      console.log(product)
+      extractVariants(product?.variants || []);
+      setFiles(
+        product.images.map((image) => {
+          return {
+            imageUrl: image.imageUrl,
+          };
+        }) || []
+      )
+    }
+  }, [product?.variants, setVariants, product]);
 
   const form = useForm({
     resolver: zodResolver(ProductFormSchema),
     defaultValues: {
-      title: "",
-      description: "",
-      categoryId: "",
-      status: true,
-      price: "0",
-      inventory: 0,
-      compareAtPrice: "0",
-      costPerItem: "0",
-      alwaysAvailable: false,
+      title: product?.title || "",
+      description: product?.description || "",
+      categoryId: product?.categoryId.toString() || "",
+      status: product?.status === "ACTIVE" ? true : false,
+      price: product?.price || 0,
+      inventory: product?.inventory || 0,
+      compareAtPrice: product?.compareAtPrice || 0,
+      costPerItem: product?.costPerProduct || 0,
+      alwaysAvailable: product?.allowPurchaseOutOfStock || false,
     },
   });
 
@@ -91,41 +185,29 @@ export const NewProductForm = ({
       description: values.description,
       categoryId: Number(values.categoryId),
       status: values.status ? "ACTIVE" : "INACTIVE",
-      price: parseInt(values.price),
+      price: values.price,
       inventory: values.inventory,
-      costPerProduct: parseInt(values.costPerItem),
-      compareAtPrice: parseInt(values.compareAtPrice),
+      costPerProduct: values.costPerItem,
+      compareAtPrice: values.compareAtPrice,
       allowPurchaseOutOfStock: values.alwaysAvailable || false,
       userId: userId,
       storeId: storeId,
     };
 
-    let productVariants: Variant[] = [];
-
-    if (variants) {
-      let filteredVariants: { [key: string]: string[] } = {}; // Add index signature to Variants type
-      for (const variant in variants) {
-        if (variants[variant as keyof Variants].length > 0) {
-          // Use keyof Variants to access variant
-          filteredVariants[variant] = variants[variant as keyof Variants]
-            .map((v) => v.value)
-            .filter((v) => v !== "");
-        }
-      }
-
-      productVariants = generateVariants(filteredVariants);
-    }
-
     try {
       setSaving(true);
-      const newProduct = await fetch("/api/products/create", {
-        method: "POST",
+      const newProduct = await fetch("/api/products", {
+        method: product ? "PATCH" : "POST",
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ ...data, productVariants, images: files }),
+        body: JSON.stringify({
+          ...data,
+          variants: variantsInventory,
+          images: files,
+          productId: product?.productId,
+        }),
       });
-      console.log(newProduct);
 
       if (newProduct.status === 200) {
         toast(`Product ${values.title} has been saved!`, {
@@ -138,6 +220,8 @@ export const NewProductForm = ({
             },
           },
         });
+
+        router.push('/' + path.split('/')[1] + '/products')
       }
     } catch (error) {
       toast(`An error occurred while saving the product.`, {
@@ -154,7 +238,7 @@ export const NewProductForm = ({
       {/* BEGIN: PAGE TITLE */}
       <div className="grid grid-cols-6 gap-x-4">
         <div className="col-span-4">
-          <h1 className="font-bold mb-4">Add Product</h1>
+          <h1 className="font-bold mb-4">{product ? 'Update' : 'Add'} Product</h1>
         </div>
         <div className="col-span-2 flex items-center gap-x-2 justify-end">
           <Button
@@ -184,7 +268,7 @@ export const NewProductForm = ({
                     d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
                   ></path>
                 </svg>
-                <span>Saving product</span>
+                <span>Saving Product</span>
               </div>
             ) : (
               <span>Save</span>
@@ -277,7 +361,7 @@ export const NewProductForm = ({
                               className="relative h-[150px] border rounded group"
                             >
                               <Button
-                                onClick={() => {}}
+                                onClick={() => { deleteFile(file.imageUrl) }}
                                 variant={"ghost"}
                                 size={"icon"}
                                 className="z-10 hidden group-hover:flex absolute top-3 right-3 rounded-full h-4 w-4 bg-white items-center justify-center border cursor-pointer"
@@ -325,7 +409,9 @@ export const NewProductForm = ({
                           type="number"
                           placeholder="Enter the price of the product"
                           className="w-full"
-                          {...form.register("price")}
+                          {...form.register("price", {
+                            valueAsNumber: true,
+                          })}
                         />
                       </FormControl>
                       <FormMessage>
@@ -343,7 +429,9 @@ export const NewProductForm = ({
                           type="number"
                           placeholder="Enter the compare at price of the product"
                           className="w-full"
-                          {...form.register("compareAtPrice")}
+                          {...form.register("compareAtPrice", {
+                            valueAsNumber: true,
+                          })}
                         />
                       </FormControl>
                       <FormMessage>
@@ -363,7 +451,9 @@ export const NewProductForm = ({
                           type="number"
                           placeholder="Cost per product item"
                           className="w-full"
-                          {...form.register("costPerItem")}
+                          {...form.register("costPerItem", {
+                            valueAsNumber: true,
+                          })}
                         />
                       </FormControl>
                       <FormMessage>
@@ -378,14 +468,21 @@ export const NewProductForm = ({
                   className="space-y-2 mt-6 bg-[--card-background] rounded-xl"
                 >
                   <h3 className="font-semibold text-sm">Variants</h3>
-
                   <FormItem>
                     <Variants
                       handleData={(variants) => {
                         setVariants(variants);
                       }}
+                      existingVariants={variants}
                     />
                   </FormItem>
+
+                  {variants && (
+                    <VariantsInventory
+                      variants={variants}
+                      updateVariants={setVariantsInventory}
+                    />
+                  )}
                 </div>
 
                 <div
@@ -489,6 +586,7 @@ export const NewProductForm = ({
                       onSelect={(categoryId) => {
                         form.setValue("categoryId", categoryId.toString());
                       }}
+                      activeCategoryId={form.getValues("categoryId")}
                     />
                   </FormControl>
                   <FormMessage>
@@ -498,16 +596,20 @@ export const NewProductForm = ({
               </div>
 
               <div className="p-4 mt-6 border rounded-xl">
-                <h3 className="font-semibold text-sm">Inventory</h3>
-
                 <FormItem>
                   <FormLabel htmlFor="inventory">Inventory</FormLabel>
+                  <FormDescription>
+                    It&apos;s the default inventory for the product. You can
+                    also set inventory for each variant.
+                  </FormDescription>
                   <FormControl>
                     <Input
                       id="inventory"
                       type="number"
                       placeholder="Product inventory"
-                      {...form.register("inventory")}
+                      {...form.register("inventory", {
+                        valueAsNumber: true,
+                      })}
                     />
                   </FormControl>
                   <FormMessage>

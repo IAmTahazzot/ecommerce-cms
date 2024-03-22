@@ -19,10 +19,11 @@ export interface Variants {
 }
 
 interface VariantsProps {
-  handleData: (variants: Variants) => void
+  handleData: (variants: Variants) => void,
+  existingVariants?: Variants
 }
 
-export const Variants = ({ handleData }: VariantsProps) => {
+export const Variants = ({ handleData, existingVariants }: VariantsProps) => {
   // TODO: Make sure to Disable it, if product is in editing mode & have any existing variantsUI
   const [showAddVariant, setShowAddVariant] = useState<boolean>(true)
   const [variants, setVariants] = useState<Variants>({
@@ -31,7 +32,22 @@ export const Variants = ({ handleData }: VariantsProps) => {
     materials: [],
   });
 
-  const [variantsUI, setVariantsUI] = useState<{ id: number }[]>([])
+  const [variantsUI, setVariantsUI] = useState<{ id: number, type?: keyof Variants }[]>([])
+
+  useEffect(() => {
+    if (existingVariants) {
+      const variantsUiData: { id: number, type?: keyof Variants }[] = []
+      Object.entries(existingVariants).forEach(([key, value], index) => {
+        if (value.length > 0) {
+          variantsUiData.push({ id: index, type: key as keyof Variants })
+        }
+      })
+
+      setShowAddVariant(!(variantsUiData.length > 0))
+      setVariants(existingVariants)
+      setVariantsUI(variantsUiData)
+    }
+  }, [existingVariants, setVariantsUI, setVariants])
 
   const updateVariants = (type: keyof Variants, values: { id: string; value: string }[]) => {
     setVariants((prev) => ({
@@ -39,7 +55,10 @@ export const Variants = ({ handleData }: VariantsProps) => {
       [type]: [...values],
     }));
 
-    handleData(variants)
+    handleData({
+      ...variants,
+      [type]: [...values],
+    })
   }
 
   const addNewVariant = () => {
@@ -88,13 +107,13 @@ export const Variants = ({ handleData }: VariantsProps) => {
           {variantsUI.map((variant, index) => (
             <div
               key={variant.id}
-              className={cn(index !== 0 && 'border-t border-slate-200')}
-            >
+              className={cn(index !== 0 && 'border-t border-slate-200')}>
               <Variant
-                variantId={variant.id}
+                // variantId={variant.id}
                 variants={variants}
                 updateVariants={updateVariants}
                 onDelete={removeVariant}
+                {...variant}
               />
             </div>
           ))}

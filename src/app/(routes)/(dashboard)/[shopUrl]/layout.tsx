@@ -10,6 +10,7 @@ import { currentUser } from "@clerk/nextjs";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import { Toaster } from '@/components/ui/sonner'
+import { ModalProvider } from "@/providers/ModalProvider";
 
 const getMyShop = async (): Promise<Shop[] | { error: string, description?: string }> => {
   const user = await currentUser();
@@ -82,6 +83,7 @@ const MainLayout = async ({ params, children }: MainLayoutProps) => {
       <Main>{children}</Main>
       <NotificationPanel />
       <Toaster position="bottom-right" />
+      <ModalProvider />
     </div>
   );
 };

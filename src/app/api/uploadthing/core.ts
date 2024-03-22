@@ -14,7 +14,7 @@ const checkAuth = () => {
 }
 
 export const ourFileRouter = {
-  productImage: f({ image: { maxFileSize: '4MB'}})
+  productImage: f({ image: { maxFileSize: '16MB'}})
     .middleware(() => checkAuth())
     .onUploadComplete(() => {})
 } satisfies FileRouter;
