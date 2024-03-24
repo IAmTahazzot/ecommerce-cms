@@ -17,7 +17,7 @@ export const NavLink = ({ href, label, className, children }: RouteData ) => {
         <Link
             key={href}
             href={href}
-            className={ cn( 'font-medium text-black', className, NavStyles.navLink) }
+            className={ cn( 'text-black', className, NavStyles.navLink) }
         >
            {children ? children : label} 
         </Link>
@@ -28,10 +28,12 @@ const NavbarMenu = (
     { data }: NavbarMenuProps
 ) => {
     const pathname = usePathname()
+    const path = usePathname()
+    const shopUrl = '/shop/' + path.split('/')[2];
 
     const routes = data.map((route: any) => {
         return {
-            href: `/category/${route.categoryUrl}`,
+            href: `${shopUrl}/category/${route.categoryUrl}`,
             label: route.categoryName,
             active: pathname === `/category/${route.categoryUrl}`
         }
@@ -45,7 +47,7 @@ const NavbarMenu = (
 
     return (
         <nav className='flex items-center justify-between space-x-4 lg:space-x-6 w-full'>
-            <ul className="flex items-center gap-x-3">
+            <ul className="flex items-center gap-x-8">
                 {
                     routes.map((route: RouteData) => {
                         return (

@@ -28,9 +28,9 @@ interface NewStoreFormProps {
 const schema = z.object({
   storeName: z
     .string()
-    .regex(/^[a-zA-Z0-9\s]+$/)
-    .min(3)
-    .max(255),
+    .regex(/^[a-zA-Z\s]+$/, { message: 'Only alphabets are allowed' })
+    .min(3, { message: 'Store name must be at least 3 characters long' })
+    .max(255, { message: 'Store name must not exceed 255 characters' }),
 });
 
 const resolver = zodResolver(schema);

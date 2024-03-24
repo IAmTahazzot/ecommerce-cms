@@ -1,15 +1,17 @@
-'use client';
+"use client";
 
-import React, { useEffect, useState } from 'react';
-import Container from '../Layout/Container';
-import NavbarMenu from './NavMenu';
-import { cn } from '@/lib/utils';
+import React, { useEffect, useState } from "react";
+import Container from "../Layout/Container";
+import NavbarMenu from "./NavMenu";
+import { cn } from "@/lib/utils";
 
 const Nav = ({ categories }: { categories: any }) => {
   return (
-    <Container className='flex h-20 items-center'>
-      <NavbarMenu data={categories} />
-    </Container>
+    <div className='border-b-[1px]'>
+      <Container className="flex h-20 items-center">
+        <NavbarMenu data={categories} />
+      </Container>
+    </div>
   );
 };
 
@@ -30,30 +32,29 @@ export const StickyNav = ({ categories }: { categories: any }) => {
       setPrevScrollPos(currentPosition);
     };
 
-    window.addEventListener('scroll', handleScroll);
+    window.addEventListener("scroll", handleScroll);
 
     // Clean up the event listener on unmount
     return () => {
-      window.removeEventListener('scroll', handleScroll);
+      window.removeEventListener("scroll", handleScroll);
     };
   }, [prevScrollPos]);
 
-    return (
-        <div
-            aria-label='🪝🧲 sticky navbar'
-            className={
-                cn(
-                    'flex h-20 items-center fixed top-0 left-0 w-full bg-white z-10 opacity-0',
-                    '-translate-y-[100%] opacity-0 transition-all duration-300 border-b-[1px] border-transparent',
-                    isScrolled && 'translate-y-0 opacity-100 shadow-[0_2px_10px_2px_#0000000f] border-[rgba(29, 29, 29, 0.1)]'
-                )
-            }
-        >
-            <Container className='h-full flex items-center w-full'>
-                <NavbarMenu data={categories} />
-            </Container>
-        </div>
-    );
-}
+  return (
+    <div
+      aria-label="🪝🧲 sticky navbar"
+      className={cn(
+        "flex h-20 items-center fixed top-0 left-0 w-full bg-white z-10 opacity-0",
+        "-translate-y-[100%] opacity-0 transition-all duration-300 border-b-[1px]",
+        isScrolled &&
+          "translate-y-0 opacity-100 shadow-[0_2px_10px_2px_#0000000f] border-[rgba(29, 29, 29, 0.1)]"
+      )}
+    >
+      <Container className="h-full flex items-center w-full">
+        <NavbarMenu data={categories} />
+      </Container>
+    </div>
+  );
+};
 
 export default Nav;

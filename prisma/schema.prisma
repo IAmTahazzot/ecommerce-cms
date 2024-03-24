@@ -15,30 +15,32 @@ model Address {
   streetAddress String
   zipcode       String
   ip            String?
-  user          User    @relation(fields: [userId], references: [userId])
+  user          User    @relation(fields: [userId], references: [userId], onDelete: Cascade)
 }
 
 model CartItem {
   cartItemId Int       @id @default(autoincrement())
   cartId     Int
   productId  Int
-  variantId  Int
+  variantId  Int?
   quantity   Int
   createdAt  DateTime  @default(now())
   updatedAt  DateTime?
-  cart       Cart      @relation(fields: [cartId], references: [cartId])
+  cart       Cart      @relation(fields: [cartId], references: [cartId], onDelete: Cascade)
   product    Product   @relation(fields: [productId], references: [productId])
-  variant    Variant   @relation(fields: [variantId], references: [variantId])
+  variant    Variant?  @relation(fields: [variantId], references: [variantId], onDelete: SetNull)
 }
 
 model Cart {
   cartId    Int        @id @default(autoincrement())
-  userId    String
-  sessionId String?
+  userId    String?    @unique
+  sessionId String?    @unique
+  storeUrl  String
   createdAt DateTime   @default(now())
   updatedAt DateTime?
-  user      User       @relation(fields: [userId], references: [userId])
+  user      User?      @relation(fields: [userId], references: [userId])
   cartItems CartItem[]
+  store     Store      @relation(fields: [storeUrl], references: [storeUrl])
 }
 
 model Category {
@@ -49,7 +51,7 @@ model Category {
   updatedAt    DateTime?
   products     Product[]
   storeUrl     String
-  store        Store       @relation(fields: [storeUrl], references: [storeUrl])
+  store        Store       @relation(fields: [storeUrl], references: [storeUrl], onDelete: Cascade)
   BillBoard    BillBoard[]
 }
 
@@ -69,32 +71,32 @@ model Notification {
   title          String
   createdAt      DateTime  @default(now())
   updatedAt      DateTime?
-  user           User      @relation(fields: [userId], references: [userId])
-  store          Store     @relation(fields: [storeId], references: [storeId])
+  user           User      @relation(fields: [userId], references: [userId], onDelete: Cascade)
+  store          Store     @relation(fields: [storeId], references: [storeId], onDelete: Cascade)
 }
 
 model OrderItem {
   orderItemId Int       @id @default(autoincrement())
   orderId     Int
   productId   Int
-  variantId   Int
+  variantId   Int?
   quantity    Int
   createdAt   DateTime  @default(now())
   updatedAt   DateTime?
   order       Order     @relation(fields: [orderId], references: [orderId])
   product     Product   @relation(fields: [productId], references: [productId])
-  variant     Variant   @relation(fields: [variantId], references: [variantId])
+  variant     Variant?  @relation(fields: [variantId], references: [variantId])
 }
 
 model Order {
   orderId    Int         @id @default(autoincrement())
   userId     String
-  storeId    Int
+  storeUrl   String
   status     String      @default("pending")
   createdAt  DateTime    @default(now())
   updatedAt  DateTime?
-  user       User        @relation(fields: [userId], references: [userId])
-  store      Store       @relation(fields: [storeId], references: [storeId])
+  user       User        @relation(fields: [userId], references: [userId], onDelete: Cascade)
+  store      Store       @relation(fields: [storeUrl], references: [storeUrl])
   orderItems OrderItem[]
   Payment    Payment[]
 }
@@ -115,7 +117,7 @@ model Product {
   productId               Int         @id @default(autoincrement())
   userId                  String
   storeId                 Int
-  categoryId              Int
+  categoryId              Int         @default(1)
   title                   String
   description             String?
   price                   Float
@@ -126,9 +128,9 @@ model Product {
   allowPurchaseOutOfStock Boolean     @default(false)
   createdAt               DateTime    @default(now())
   updatedAt               DateTime?
-  user                    User        @relation(fields: [userId], references: [userId])
-  store                   Store       @relation(fields: [storeId], references: [storeId])
-  category                Category    @relation(fields: [categoryId], references: [categoryId])
+  user                    User        @relation(fields: [userId], references: [userId], onDelete: Cascade)
+  store                   Store       @relation(fields: [storeId], references: [storeId], onDelete: Cascade)
+  category                Category    @relation(fields: [categoryId], references: [categoryId], onDelete: SetDefault)
   cartItems               CartItem[]
   orderItems              OrderItem[]
   variants                Variant[]
@@ -144,8 +146,8 @@ model Review {
   message     String
   createdAt   DateTime  @default(now())
   updatedAt   DateTime?
-  product     Product   @relation(fields: [productId], references: [productId])
-  user        User      @relation(fields: [userId], references: [userId])
+  product     Product   @relation(fields: [productId], references: [productId], onDelete: Cascade)
+  user        User      @relation(fields: [userId], references: [userId], onDelete: Cascade)
 }
 
 model Store {
@@ -161,6 +163,7 @@ model Store {
   notifications Notification[]
   Category      Category[]
   BillBoard     BillBoard[]
+  Cart          Cart[]
 }
 
 enum Role {
@@ -213,6 +216,6 @@ model BillBoard {
   storeUrl   String
   createdAt  DateTime  @default(now())
   updatedAt  DateTime?
-  category   Category  @relation(fields: [categoryId], references: [categoryId])
-  store      Store     @relation(fields: [storeUrl], references: [storeUrl])
+  category   Category  @relation(fields: [categoryId], references: [categoryId], onDelete: Cascade)
+  store      Store     @relation(fields: [storeUrl], references: [storeUrl], onDelete: Cascade)
 }

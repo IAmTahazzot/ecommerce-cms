@@ -6,6 +6,7 @@ import { cn } from "@/lib/utils";
 import { Search, ShoppingCart } from "lucide-react";
 import localFont from "next/font/local";
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 
 const SACRAMENTO_FONT = localFont({
   src: "../../../../public/fonts/RemachineScript.ttf",
@@ -14,15 +15,17 @@ const SACRAMENTO_FONT = localFont({
 
 const NavSearch = ({ shopName }: { shopName: string }) => {
   const { openModal } = useModal();
+  const path = usePathname()
+  const shopUrl = '/shop/' + path.split('/')[2];
   const beautifyShopName =
     shopName.replace(/-/g, " ").slice(0, 1).toUpperCase() +
     shopName.replace(/-/g, " ").slice(1);
 
   return (
-    <div className=" border-b-[1px]">
+    <div className="border-b-[1px]">
       <Container className="grid grid-cols-[auto_1fr] align-center justify-between py-8">
         <div className="w-[360px]" aria-label="brand name or logo">
-          <Link href="/black-fashion">
+          <Link href={shopUrl}>
             <h1
               className={cn(
                 SACRAMENTO_FONT.className,

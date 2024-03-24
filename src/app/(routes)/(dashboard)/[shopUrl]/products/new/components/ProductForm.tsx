@@ -91,29 +91,29 @@ export const ProductForm = ({
     React.useState<Record<string, string[]>>();
   const [saving, setSaving] = React.useState<boolean>(false);
   const [deletedFiles, setDeletedFiles] = React.useState<string[]>([]);
-  const router = useRouter()
-  const path = usePathname()
-  const { theme } = useTheme()
+  const router = useRouter();
+  const path = usePathname();
+  const { theme } = useTheme();
 
   const deleteFile = async (imageUrl: string) => {
     const newFiles = files.filter((file) => file.imageUrl !== imageUrl);
     setFiles(newFiles);
     try {
-      const response = await fetch('/api/products/deleteImages', {
-        method: 'POST',
+      const response = await fetch("/api/products/deleteImages", {
+        method: "POST",
         headers: {
-          'Content-Type': 'application/json'
+          "Content-Type": "application/json",
         },
-        body: JSON.stringify({ imageUrl })
-      })
+        body: JSON.stringify({ imageUrl }),
+      });
 
       if (response.ok) {
-        toast('Image has been deleted!')
+        toast("Image has been deleted!");
       }
     } catch (error) {
-      toast('An error occurred while deleting the image.')
+      toast("An error occurred while deleting the image.");
     }
-  }
+  };
 
   React.useEffect(() => {
     const extractVariants = (existingVariants: VariantType[]) => {
@@ -154,7 +154,7 @@ export const ProductForm = ({
     };
 
     if (product) {
-      console.log(product)
+      console.log(product);
       extractVariants(product?.variants || []);
       setFiles(
         product.images.map((image) => {
@@ -162,7 +162,7 @@ export const ProductForm = ({
             imageUrl: image.imageUrl,
           };
         }) || []
-      )
+      );
     }
   }, [product?.variants, setVariants, product]);
 
@@ -223,7 +223,7 @@ export const ProductForm = ({
           },
         });
 
-        router.push('/' + path.split('/')[1] + '/products')
+        router.push("/" + path.split("/")[1] + "/products");
       }
     } catch (error) {
       toast(`An error occurred while saving the product.`, {
@@ -240,7 +240,9 @@ export const ProductForm = ({
       {/* BEGIN: PAGE TITLE */}
       <div className="grid grid-cols-6 gap-x-4">
         <div className="col-span-4">
-          <h1 className="font-bold mb-4">{product ? 'Update' : 'Add'} Product</h1>
+          <h1 className="font-bold mb-4">
+            {product ? "Update" : "Add"} Product
+          </h1>
         </div>
         <div className="col-span-2 flex items-center gap-x-2 justify-end">
           <Button
@@ -314,10 +316,11 @@ export const ProductForm = ({
                         initialValue={form.getValues("description")}
                         onEditorChange={(content, editor) => {
                           form.setValue("description", content);
+                          console.log(content);
                         }}
                         init={{
                           height: 300,
-                          menubar: false,
+                          menubar: true,
                           plugins: [
                             "autoresize",
                             "advlist",
@@ -335,18 +338,17 @@ export const ProductForm = ({
                             "media",
                             "table",
                             "preview",
-                            "help",
                             "wordcount",
                           ],
                           toolbar:
                             "undo redo | blocks | " +
                             "bold italic forecolor | alignleft aligncenter " +
                             "alignright alignjustify | bullist numlist outdent indent | " +
-                            "removeformat | help",
+                            "removeforma",
                           content_style:
-                            "body { font-family:Helvetica,Arial,sans-serif; font-size:14px }",
-                            skin: theme === 'dark' ? 'oxide-dark' : 'oxide',
-                            content_css: theme === 'dark' ? 'dark' : 'default',
+                            "body { font-family:Helvetica,Arial,sans-serif; font-size:16px }",
+                          skin: theme === "dark" ? "oxide-dark" : "oxide",
+                          content_css: theme === "dark" ? "dark" : "default",
                         }}
                       />
                     </FormControl>
@@ -365,7 +367,9 @@ export const ProductForm = ({
                               className="relative h-[150px] border rounded group"
                             >
                               <Button
-                                onClick={() => { deleteFile(file.imageUrl) }}
+                                onClick={() => {
+                                  deleteFile(file.imageUrl);
+                                }}
                                 variant={"ghost"}
                                 size={"icon"}
                                 className="z-10 hidden group-hover:flex absolute top-3 right-3 rounded-full h-4 w-4 bg-white items-center justify-center border cursor-pointer"
