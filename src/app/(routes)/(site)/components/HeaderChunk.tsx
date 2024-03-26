@@ -7,6 +7,7 @@ import { VscColorMode } from "react-icons/vsc";
 import { useUser, SignOutButton } from "@clerk/nextjs";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
+import { useTheme } from "next-themes";
 
 interface HeaderChunkProps {
   storeUrl: string;
@@ -14,6 +15,7 @@ interface HeaderChunkProps {
 
 export const HeaderChunk = ({ storeUrl }: HeaderChunkProps) => {
   const { isLoaded, isSignedIn, user } = useUser();
+  const { setTheme, theme} = useTheme()
 
   if (!isLoaded) {
     return (
@@ -30,17 +32,31 @@ export const HeaderChunk = ({ storeUrl }: HeaderChunkProps) => {
       {isSignedIn ? (
         <div className="flex items-center gap-x-2">
           {storeUrl ? (
-            <Link href={"/" + storeUrl}>
-              <Button variant={"outline"} size={"sm"}>
-                Open Dashboard
-              </Button>
-            </Link>
+            <div className="flex items-center gap-x-3">
+              <Link href={"/" + storeUrl}>
+                <Button variant={"ghost"} size={"sm"} className="h-8">
+                  Open Dashboard
+                </Button>
+              </Link>
+              <Link href={"/stores"}>
+                <Button variant={"ghost"} size={"sm"} className="h-8">
+                  Visit Stores
+                </Button>
+              </Link>
+            </div>
           ) : (
-            <Link href="/create-store">
-              <Button variant={"outline"} size={"sm"}>
-                Create Store
-              </Button>
-            </Link>
+            <div className="flex items-center gap-x-3">
+              <Link href="/create-store">
+                <Button variant={"outline"} size={"sm"} className="h-8">
+                  Create Store
+                </Button>
+              </Link>
+              <Link href={"/stores"}>
+                <Button variant={"ghost"} size={"sm"} className="h-8">
+                  Visit Stores
+                </Button>
+              </Link>
+            </div>
           )}
           <SignOutButton>
             <Button variant={"default"} size={"sm"}>
@@ -63,7 +79,10 @@ export const HeaderChunk = ({ storeUrl }: HeaderChunkProps) => {
         </div>
       )}
 
-      <Button variant={"ghost"} size={"icon"}>
+      <Button variant={"ghost"} size={"icon"} 
+      onClick={() => {
+        setTheme(theme === "light" ? "dark" : "light");
+      }}>
         <VscColorMode className="h-[18px] w-[18px] rotate-45" />
       </Button>
     </div>

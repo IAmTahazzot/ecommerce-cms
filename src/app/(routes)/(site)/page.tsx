@@ -38,11 +38,11 @@ const UnityShopMainPage = async () => {
         </header>
 
         <section className="flex flex-col gap-y-4 mt-32 text-center">
-          <div className="flex items-center justify-center w-fit mx-auto py-1 px-3 gap-2 rounded-full bg-slate-100 border border-slate-200 text-xs">
+          <div className="flex items-center justify-center w-fit mx-auto py-1 px-3 gap-2 rounded-full bg-slate-100 dark:bg-neutral-700 border border-slate-200 dark:border-neutral-900 text-xs">
             <span>🎉</span>
             <span>Explore more by signing up</span>
           </div>
-          <h1 className="text-6xl font-extrabold tracking-tighter leading-[1.12] text-neutral-900">
+          <h1 className="text-6xl font-extrabold tracking-tighter leading-[1.12] text-neutral-900 dark:text-neutral-100">
             Power Your Vision: <span className="rounded">UnityShop </span>CMS,
             Your Digital Shop Management
           </h1>

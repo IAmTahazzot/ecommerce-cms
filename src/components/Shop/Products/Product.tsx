@@ -1,17 +1,21 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { ProductType } from "./Products";
 import Image from "next/image";
-import { FaStar, FaStarHalfAlt } from "react-icons/fa";
+// import { FaStar, FaStarHalfAlt } from "react-icons/fa";
+import { IoStarSharp, IoStarHalfSharp } from "react-icons/io5";
+import { MdOutlineStarOutline } from "react-icons/md";
+
 import { cn } from "@/lib/utils";
-import { CartItem, Variant } from "@prisma/client";
+import { CartItem, Review, User, Variant } from "@prisma/client";
 import { Button } from "@/components/ui/button";
 import { BsPlusLg } from "react-icons/bs";
 import { HiMiniMinus } from "react-icons/hi2";
 import DOMPurify from "dompurify";
 import { useCart } from "@/hooks/useCart";
 import { ModalType, useModal } from "@/hooks/useModal";
+import { toast } from "sonner";
 
 const extractVariants = (variants: Variant[]) => {
   const variantsData = {
@@ -46,9 +50,106 @@ export type CartItemType = {
   quantity: number;
   variant?: Variant;
   storeUrl: string;
-}
+};
 
-export const Product = ({ product, shopUrl }: { product: ProductType, shopUrl: string }) => {
+export const buyProduct = async ({
+  carts,
+  product,
+  quantity,
+  shopUrl,
+  selectedVariant,
+  setBuying,
+  addToCart,
+  openModal,
+}: {
+  carts: (CartItemType & { id: number })[];
+  product: ProductType;
+  quantity: number;
+  shopUrl: string;
+  selectedVariant: { size: string; color: string; material: string } | null;
+  setBuying: React.Dispatch<React.SetStateAction<boolean>>;
+  addToCart: (item: CartItemType & { id: number }) => void;
+  openModal: (modal: ModalType) => void;
+}) => {
+  setBuying(true);
+
+  // check if product is already in cart and update quantity
+  const existingCartItem = carts.find(
+    (cart) =>
+      cart.product.productId === product.productId &&
+      (!product.variants ||
+        product.variants.length === 0 ||
+        (cart.variant &&
+          selectedVariant &&
+          cart.variant.size === selectedVariant.size &&
+          cart.variant.color === selectedVariant.color &&
+          cart.variant.material === selectedVariant.material))
+  );
+
+  if (existingCartItem) {
+    // duplicate product
+    toast.info(
+      "Product already in cart. You may update the quantity in the cart."
+    );
+    openModal(ModalType.CART);
+    setBuying(false);
+    return false;
+  }
+
+  try {
+    const data: CartItemType = {
+      product,
+      quantity,
+      storeUrl: shopUrl,
+    };
+
+    if (product.variants && product.variants.length > 0 && selectedVariant) {
+      const variant = product.variants.find(
+        (variant) =>
+          variant.size === selectedVariant.size &&
+          variant.color === selectedVariant.color &&
+          variant.material === selectedVariant.material
+      );
+
+      if (variant) {
+        data.variant = variant;
+      }
+    }
+
+    const response = await fetch("/api/cart", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(data),
+    });
+
+    const res: {
+      data: CartItemType & CartItem & { id: number };
+      message: string;
+    } = await response.json();
+    res.data.id = res.data.cartItemId;
+
+    if (response.ok) {
+      addToCart(res.data);
+      toast.success(res.message);
+      openModal(ModalType.CART);
+    }
+
+    setBuying(false);
+  } catch (err) {
+    toast.error("Failed to add product to cart, Please try later!");
+    setBuying(false);
+  }
+};
+
+export const Product = ({
+  product,
+  shopUrl,
+}: {
+  product: ProductType;
+  shopUrl: string;
+}) => {
   const [quantity, setQuantity] = useState<number>(1);
   const [currentImage, setCurrentImage] = useState<number>(0);
   const [selectedVariant, setSelectedVariant] = useState({
@@ -56,12 +157,22 @@ export const Product = ({ product, shopUrl }: { product: ProductType, shopUrl: s
     color: "",
     material: "",
   });
-  const [view, setView] = useState<"description" | "reviews">("description");
+  const [view, setView] = useState<"description" | "reviews">("reviews");
   const [safeDescription, setSafeDescription] = useState<string>("");
   const variants = extractVariants(product.variants || []);
   const [buying, setBuying] = useState<boolean>(false);
-  const { addToCart } = useCart()
-  const { openModal } = useModal()
+  const { addToCart, carts } = useCart();
+  const { openModal } = useModal();
+
+  const price =
+    product.variants && product.variants.length > 0
+      ? product.variants.find(
+          (variant) =>
+            variant.size === selectedVariant.size &&
+            variant.color === selectedVariant.color &&
+            variant.material === selectedVariant.material
+        )?.price || product.price
+      : product.price;
 
   useEffect(() => {
     setSafeDescription(DOMPurify.sanitize(product.description || ""));
@@ -95,72 +206,30 @@ export const Product = ({ product, shopUrl }: { product: ProductType, shopUrl: s
     });
   }
 
-  const reviewAvg = product.Review &&
+  const reviewAvg =
+    product.Review &&
     product.Review.reduce(
       (acc, review) => acc + Number(review.reviewLevel),
       0
     ) / product.Review.length;
 
-  const reviews =  product.Review && (
+  const reviews = product.Review && (
     <div className="flex items-center mt-2">
       {Array.from({ length: 5 }).map((_, index) => {
-        if (!reviewAvg) return null;
+        if (!reviewAvg)
+          return <IoStarSharp key={index} className="text-neutral-300" />;
 
         if (reviewAvg >= index + 1) {
-          return <FaStar key={index} className="text-primary-500" />;
+          return <IoStarSharp key={index} className="text-primary-500" />;
         } else if (reviewAvg >= index + 0.5) {
-          return <FaStarHalfAlt key={index} className="text-primary-500" />;
+          return <IoStarHalfSharp key={index} className="text-primary-500" />;
         } else {
-          return <FaStar key={index} className="text-neutral-300" />;
+          return <IoStarSharp key={index} className="text-neutral-300" />;
         }
       })}
       <span className="text-neutral-500 ml-2">({product.Review.length})</span>
     </div>
   );
-
-  const buyProduct = async () => {
-    setBuying(true);
-
-    try {
-      const data: CartItemType = {
-        product,
-        quantity,
-        storeUrl: shopUrl,
-      }
-
-      if (product.variants && product.variants.length > 0) {
-        const variant = product.variants.find(
-          (variant) =>
-            variant.size === selectedVariant.size &&
-            variant.color === selectedVariant.color &&
-            variant.material === selectedVariant.material
-        );
-
-        if (variant) {
-          data.variant = variant;
-        }
-      }
-
-      const response = await fetch('/api/cart', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(data),
-      });
-
-      const res: (CartItemType & { id: number })= await response.json();
-
-      if (response.ok) {
-        addToCart(res);
-        openModal(ModalType.CART)
-      }
-
-      setBuying(false);
-    } catch (err) {
-      setBuying(false);
-    }
-  };
 
   return (
     <div className="grid grid-cols-[200px_1fr_1fr] gap-6">
@@ -182,6 +251,7 @@ export const Product = ({ product, shopUrl }: { product: ProductType, shopUrl: s
                 fill
                 sizes="(min-width: 1024px) 50vw, 100vw"
                 className="object-cover w-full h-full rounded"
+                priority={false}
               />
             </div>
           );
@@ -194,6 +264,7 @@ export const Product = ({ product, shopUrl }: { product: ProductType, shopUrl: s
           fill
           sizes="(min-width: 1024px) 50vw, 100vw"
           className="object-cover w-full h-full rounded-md"
+          priority
         />
       </div>
       <div className="space-y-8">
@@ -296,9 +367,7 @@ export const Product = ({ product, shopUrl }: { product: ProductType, shopUrl: s
         )}
 
         <div>
-          <h2 className="text-5xl font-medium mb-5">
-            ${product.price.toFixed(2)}
-          </h2>
+          <h2 className="text-5xl font-medium mb-5">${price.toFixed(2)}</h2>
           <div className="flex items-center gap-x-6">
             <div className="flex items-center">
               <Button
@@ -320,7 +389,18 @@ export const Product = ({ product, shopUrl }: { product: ProductType, shopUrl: s
               </Button>
             </div>
             <button
-              onClick={buyProduct}
+              onClick={() => {
+                buyProduct({
+                  carts,
+                  product,
+                  quantity,
+                  shopUrl,
+                  selectedVariant,
+                  setBuying,
+                  addToCart,
+                  openModal,
+                });
+              }}
               className="w-full font-medium text-xl rounded-full bg-white border border-black text-center py-3 px-4 hover:bg-black hover:text-white transition-colors duration-300 flex items-center justify-center group/btn"
             >
               {buying ? (
@@ -384,7 +464,7 @@ export const Product = ({ product, shopUrl }: { product: ProductType, shopUrl: s
             <div>
               {/* <p className='mt-4 text-lg'>{product.description}</p> */}
               <div
-                className=" text-lg"
+                className="text-lg description"
                 dangerouslySetInnerHTML={{
                   __html: safeDescription || "No description found.",
                 }}
@@ -392,44 +472,128 @@ export const Product = ({ product, shopUrl }: { product: ProductType, shopUrl: s
             </div>
           )}
 
-          {view === "reviews" && product.Review && product.Review.length > 0 && (
-            <div>
-              <h2 className="text-3xl font-medium">Reviews</h2>
-              <div className="mt-4">
-                {product.Review.map((review, index) => (
-                  <div key={index} className="flex items-center gap-x-4">
+          {view === "reviews" &&
+            product.Review &&
+            product.Review.length > 0 &&
+            reviewAvg && (
+              <div>
+                <div>
+                  {/* review star with rounded progress static bar black color and left side count of review number for one to five */}
+                  <div className="flex items-center gap-x-4 mb-6">
+                    <h2 className="text-3xl font-medium">Reviews</h2>
                     <div className="flex items-center">
                       {Array.from({ length: 5 }).map((_, index) => {
-                        if (Number(review.reviewLevel) >= index + 1) {
+                        if (reviewAvg >= index + 1) {
                           return (
-                            <FaStar key={index} className="text-primary-500" />
+                            <IoStarSharp
+                              key={index}
+                              className="text-primary-500"
+                            />
                           );
-                        } else if (Number(review.reviewLevel) >= index + 0.5) {
+                        } else if (reviewAvg >= index + 0.5) {
                           return (
-                            <FaStarHalfAlt
+                            <IoStarHalfSharp
                               key={index}
                               className="text-primary-500"
                             />
                           );
                         } else {
                           return (
-                            <FaStar key={index} className="text-neutral-300" />
+                            <IoStarSharp
+                              key={index}
+                              className="text-neutral-300"
+                            />
                           );
                         }
                       })}
                     </div>
-                    <p className="text-lg">{review.message}</p>
+                    <span className="text-lg">
+                      ({product.Review && product.Review.length})
+                    </span>
                   </div>
-                ))}
-              </div>
-            </div>
-          )}
 
-          {view === "reviews" && product.Review && product.Review.length === 0 && (
-            <div>
-              <p className="mt-4 text-lg">No reviews yet</p>
-            </div>
-          )}
+                  <div className="flex items-start gap-x-4 flex-col-reverse">
+                    {Array.from({ length: 5 }).map((_, index) => {
+                      const count =
+                        product.Review &&
+                        product.Review.filter(
+                          (review) => Number(review.reviewLevel) === index + 1
+                        ).length;
+
+                      return (
+                        <div key={index}>
+                          <div className="grid grid-cols-[50px_1fr_1fr] gap-4 items-center">
+                            <span>{index + 1} star</span>
+                            <div className="relative bg-neutral-200 rounded-full overflow-hidden h-3 w-[300px]">
+                              <div
+                                className="bg-black h-full"
+                                style={{
+                                  width: `${
+                                    count &&
+                                    product.Review &&
+                                    (count / product.Review.length) * 100
+                                  }%`,
+                                }}
+                              ></div>
+                            </div>
+                            <span className="text-lg">{count || 0}</span>
+                          </div>
+                        </div>
+                      );
+                    })}
+                  </div>
+                </div>
+
+                <div className="mt-10">
+                  {product.Review.map((review , index) => (
+                    <div key={index} className="flex gap-y-3 flex-col mb-6">
+                      <span className='text-lg font-semibold'>
+                        {/* @ts-ignore */}
+                        {review.user?.firstName || 'Ghost'}
+                      </span>
+                      <div className="flex items-center">
+                        {Array.from({ length: 5 }).map((_, index) => {
+                          if (Number(review.reviewLevel) >= index + 1) {
+                            return (
+                              <IoStarSharp
+                                key={index}
+                                className="text-primary-500"
+                              />
+                            );
+                          } else if (
+                            Number(review.reviewLevel) >=
+                            index + 0.5
+                          ) {
+                            return (
+                              <IoStarHalfSharp
+                                key={index}
+                                className="text-primary-500"
+                              />
+                            );
+                          } else {
+                            return (
+                              <IoStarSharp
+                                key={index}
+                                className="text-neutral-300"
+                              />
+                            );
+                          }
+                        })}
+                      </div>
+                      <p className="text-lg">{review.message}</p>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+
+          {view === "reviews" &&
+            product.Review &&
+            product.Review.length === 0 && (
+              <div>
+                <p className="mt-4 text-lg">No reviews yet</p>
+              </div>
+            )}
         </div>
       </div>
       {/* [END]: Second column */}

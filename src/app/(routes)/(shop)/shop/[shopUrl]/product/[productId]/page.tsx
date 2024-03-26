@@ -16,7 +16,11 @@ export default async function CategoryPage({
     },
     include: {
       category: true,
-      Review: true,
+      Review: {
+        include: {
+          user: true,
+        }
+      },
       images: true,
       variants: true
     },

@@ -21,6 +21,27 @@ body {
   cursor: pointer;
 }
 
+/* [BEGIN]: Product Description style */
+.description h1 {
+  font-size: 2rem;
+  font-weight: 700;
+  margin-bottom: 1rem;
+}
+
+.description p {
+  font-size: 1rem;
+  margin-bottom: 1rem;
+}
+
+.description table tr td {
+  padding: 1em; 
+}
+
+.description table tr {
+  border-bottom: 1px solid #ccc;
+}
+/* [END]: Product Description style */
+
 @layer base {
   :root {
     --background: 0 0% 100%;

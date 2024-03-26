@@ -46,7 +46,7 @@ export const POST = async (request: Request, response: Response) => {
 
     const cart = await db.cartItem.findFirst({
       where: {
-        cartId: response.cartId
+        cartItemId: response.cartItemId
       },
       include: {
         product: {
@@ -74,8 +74,6 @@ export const POST = async (request: Request, response: Response) => {
     },
   });
 
-console.log(existingSessionCart, existingUserCart)
-
   try {
     // if cart exists, add to cartItem
     if (existingUserCart) {
@@ -87,7 +85,7 @@ console.log(existingSessionCart, existingUserCart)
       });
 
       return NextResponse.json({
-        message: "Cart added",
+        message: "Product has been added to cart",
         data: newCartResponse,
       });
     } else if (existingSessionCart) {
@@ -99,7 +97,7 @@ console.log(existingSessionCart, existingUserCart)
       });
 
       return NextResponse.json({
-        message: "Cart added",
+        message: "Product has been added to cart",
         data: newCartResponse,
       });
     } else {
@@ -133,7 +131,7 @@ console.log(existingSessionCart, existingUserCart)
       });
 
       return NextResponse.json({
-        message: "Cart added",
+        message: "Your first cart has been added",
         data: response,
       });
     }
@@ -141,3 +139,38 @@ console.log(existingSessionCart, existingUserCart)
     return NextResponse.error()
   }
 };
+
+export const PUT = async (request: Request) => {
+  const body = (await request.json()) as { id: number; quantity: number };
+
+  try {
+    await db.cartItem.update({
+      where: {
+        cartItemId: body.id,
+      },
+      data: {
+        quantity: body.quantity,
+      },
+    });
+
+    return NextResponse.json({ message: "Quantity updated" });
+  } catch (error) {
+    return NextResponse.error();
+  }
+}
+
+export const DELETE = async (request: Request) => {
+  const body = (await request.json()) as { id: number };
+
+  try {
+    await db.cartItem.delete({
+      where: {
+        cartItemId: body.id,
+      },
+    });
+
+    return NextResponse.json({ message: "Cart deleted" });
+  } catch (error) {
+    return NextResponse.error();
+  }
+}

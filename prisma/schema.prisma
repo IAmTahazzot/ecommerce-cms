@@ -45,8 +45,8 @@ model Cart {
 
 model Category {
   categoryId   Int         @id @default(autoincrement())
-  categoryUrl  String      @unique
-  categoryName String      @unique
+  categoryUrl  String
+  categoryName String
   createdAt    DateTime    @default(now())
   updatedAt    DateTime?
   products     Product[]
@@ -197,7 +197,7 @@ model Variant {
   color      String?
   material   String?
   inventory  Int         @default(0)
-  price      Int
+  price      Float
   imageUrl   String?
   sku        String?
   createdAt  DateTime    @default(now())

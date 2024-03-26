@@ -1,10 +1,14 @@
 import { db } from "@/db/db";
 import { currentUser } from "@clerk/nextjs";
 import { NextResponse } from "next/server";
+import { UTApi } from "uploadthing/server";
 
 export const POST = async (request: Request) => {
   const body = await request.json();
   const user = await currentUser();
+  const { autoImage } = body;
+  const upload = new UTApi();
+  const SITE_URL = process.env.SITE_URL;
 
   if (!user) {
     return NextResponse.json({
@@ -12,6 +16,17 @@ export const POST = async (request: Request) => {
       status: 401,
     });
   }
+
+  // if autoImage available create an image here instead of the client
+  if (autoImage) {
+    const response: { data: { key: string } }[] =
+      (await upload.uploadFilesFromUrl([SITE_URL + autoImage])) as any as {
+        data: { key: string };
+      }[];
+
+    body.imageUrl = response[0].data.key;
+  }
+
 
   try {
     await db.billBoard.create({
@@ -21,8 +36,8 @@ export const POST = async (request: Request) => {
         imageUrl: body.imageUrl,
         categoryId: body.categoryId,
         storeUrl: body.shopUrl,
-      }
-    })
+      },
+    });
 
     return NextResponse.json({
       message: "Billboard has been created",
@@ -33,8 +48,7 @@ export const POST = async (request: Request) => {
       status: 500,
     });
   }
-
-}
+};
 
 export const PATCH = async (request: Request) => {
   const body = await request.json();
@@ -65,7 +79,7 @@ export const PATCH = async (request: Request) => {
     });
   } catch (error) {
     return NextResponse.json({
-      message: 'Unable to update billboard',
+      message: "Unable to update billboard",
       status: 500,
     });
   }
@@ -85,7 +99,7 @@ export const DELETE = async (request: Request) => {
   try {
     await db.billBoard.delete({
       where: {
-        id: body.billboardId
+        id: body.billboardId,
       },
     });
 
@@ -98,4 +112,4 @@ export const DELETE = async (request: Request) => {
       status: 500,
     });
   }
-}
+};

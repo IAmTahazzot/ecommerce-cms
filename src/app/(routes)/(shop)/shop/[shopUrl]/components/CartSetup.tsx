@@ -13,7 +13,7 @@ export const CartSetup = ( { carts }: CartSetupProps ) => {
 
   useEffect(() => {
     addCollectionToCart(carts);
-  }, [carts])
+  }, [])
 
   return null;
 }

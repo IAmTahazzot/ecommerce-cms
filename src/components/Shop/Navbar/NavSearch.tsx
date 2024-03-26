@@ -1,12 +1,14 @@
 "use client";
 
 import Container from "@/components/Shop/Layout/Container";
+import { useCart } from "@/hooks/useCart";
 import { ModalType, useModal } from "@/hooks/useModal";
 import { cn } from "@/lib/utils";
 import { Search, ShoppingCart } from "lucide-react";
 import localFont from "next/font/local";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { useEffect, useState } from "react";
 
 const SACRAMENTO_FONT = localFont({
   src: "../../../../public/fonts/RemachineScript.ttf",
@@ -14,7 +16,28 @@ const SACRAMENTO_FONT = localFont({
 });
 
 const NavSearch = ({ shopName }: { shopName: string }) => {
+  const [totalPrice, setTotalPrice] = useState(0);
+  const [totalQuantity, setTotalQuantity] = useState(0);
+
   const { openModal } = useModal();
+  const { carts } = useCart()
+
+  useEffect(() => {
+    let price: number = 0;
+
+    carts.forEach(cart => {
+      if (cart.variant && cart.variant.price) {
+        price += cart.variant.price * cart.quantity;
+      } else {
+        price += cart.product.price * cart.quantity;
+      }
+    });
+
+    const quantity = carts.reduce((acc, item) => acc + item.quantity, 0);
+    setTotalQuantity(quantity);
+    setTotalPrice(parseFloat(price.toFixed(2)));
+  }, [carts])
+
   const path = usePathname()
   const shopUrl = '/shop/' + path.split('/')[2];
   const beautifyShopName =
@@ -52,8 +75,8 @@ const NavSearch = ({ shopName }: { shopName: string }) => {
             className="rounded-full bg-[#1d1d1d] font-medium text-white space-x-2 h-full flex items-center px-5"
           >
             <ShoppingCart size={20} />
-            <span>$0.00</span>
-            <span>(0)</span>
+            <span>${totalPrice}</span>
+            <span>({totalQuantity})</span>
           </button>
         </div>
       </Container>

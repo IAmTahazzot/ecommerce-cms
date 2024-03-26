@@ -28,7 +28,11 @@ export default async function Shop({
 
     include: {
       category: true,
-      Review: true,
+      Review: {
+        include: {
+          user: true
+        }
+      },
       images: true
     }
   })

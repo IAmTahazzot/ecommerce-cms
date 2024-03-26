@@ -25,17 +25,31 @@ export const GetStarted = ({ storeUrl }: HeaderChunkProps) => {
   return (
     <div className="flex items-center justify-center gap-3 mt-8">
       {storeUrl ? (
-        <Link href={"/" + storeUrl}>
-          <Button variant={"default"} size={"lg"} className='h-12'>
-            Open Dashboard
-          </Button>
-        </Link>
+        <div className="flex items-center gap-x-3">
+          <Link href={"/" + storeUrl}>
+            <Button variant={"default"} size={"lg"} className="h-12">
+              Open Dashboard
+            </Button>
+          </Link>
+          <Link href={"/stores"}>
+            <Button variant={"default"} size={"lg"} className="h-12">
+              Visit Stores
+            </Button>
+          </Link>
+        </div>
       ) : (
-        <Link href="/create-store">
-          <Button variant={"default"} size={"lg"} className='h-12'>
-            Create Store
-          </Button>
-        </Link>
+        <div className="flex items-center gap-x-3">
+          <Link href="/create-store">
+            <Button variant={"outline"} size={"lg"} className="h-12">
+              Create Store
+            </Button>
+          </Link>
+          <Link href={"/stores"}>
+            <Button variant={"default"} size={"lg"} className="h-12">
+              Visit Stores
+            </Button>
+          </Link>
+        </div>
       )}
     </div>
   );

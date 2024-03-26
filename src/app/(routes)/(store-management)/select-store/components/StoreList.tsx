@@ -36,7 +36,7 @@ export function StoreList({ stores }: StoreListProps) {
         <h1 className="font-semibold text-sm">Select a store to continue</h1>
         <Link href="/create-store">
           <Button variant="outline" className="text-xs rounded-full" size="sm">
-            Create a store 
+            Create a store
           </Button>
         </Link>
       </div>
@@ -50,7 +50,7 @@ export function StoreList({ stores }: StoreListProps) {
             className="w-full justify-between"
           >
             {value
-              ? stores.find((store) => store.storeName === value)?.storeName
+              ? stores.find((store) => store.storeName.toLowerCase() === value)?.storeName
               : "Select a store..."}
             <CaretSortIcon className="ml-2 h-4 w-4 shrink-0 opacity-50" />
           </Button>
@@ -65,7 +65,11 @@ export function StoreList({ stores }: StoreListProps) {
                   key={store.storeId}
                   value={store.storeName}
                   onSelect={(currentValue) => {
-                    setValue(currentValue === value ? "" : currentValue);
+                    setValue(
+                      currentValue.toLowerCase() === value
+                        ? value
+                        : currentValue
+                    );
                     setOpen(false);
                   }}
                 >
@@ -73,7 +77,7 @@ export function StoreList({ stores }: StoreListProps) {
                   <CheckIcon
                     className={cn(
                       "ml-auto h-4 w-4",
-                      value === store.storeName ? "opacity-100" : "opacity-0"
+                      value === store.storeName.toLowerCase() ? "opacity-100" : "opacity-0"
                     )}
                   />
                 </CommandItem>

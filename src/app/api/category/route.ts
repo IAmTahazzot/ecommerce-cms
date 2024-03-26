@@ -28,7 +28,7 @@ export const POST = async (request: Request) => {
   }
 
   try {
-    await db.category.create({
+    const newCategory = await db.category.create({
       data: {
         categoryName: body.categoryName,
         categoryUrl: body.categoryName.split(" ").join("-").toLowerCase(),
@@ -37,6 +37,7 @@ export const POST = async (request: Request) => {
     });
 
     return NextResponse.json({
+      data: newCategory,
       message: "Category has been created",
     });
   } catch (error) {

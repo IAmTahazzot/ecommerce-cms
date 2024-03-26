@@ -169,6 +169,7 @@ export const columns: ColumnDef<VariantProps>[] = [
           onBlur={(e) => {
             if (Number(e.target.value) === row.original.price) return;
             updatePrice(e.target.value, row.original.variantId);
+            console.log(e.target.value);
           }}
           defaultValue={row.original.price}
           className="max-w-[70px]"

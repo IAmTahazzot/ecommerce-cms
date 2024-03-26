@@ -1,16 +1,21 @@
 "use client";
 
+import { useState } from "react";
+import Link from "next/link";
+
 import { ChevronLeft, ChevronRight, Languages } from "lucide-react";
 import { MailOpen, X } from "../Icons";
-import Container from "../Layout/Container";
-import Link from "next/link";
-import { useState } from "react";
+
+import "swiper/css";
+import "swiper/css/navigation";
+
 import { Swiper as SwiperClass } from "swiper/types";
 import { Swiper, SwiperSlide } from "swiper/react";
 import { Navigation, Autoplay } from "swiper/modules";
 
-import "swiper/css";
-import "swiper/css/navigation";
+import Container from "../Layout/Container";
+import { User } from "./User";
+
 
 const Announcement = () => {
   const [announcements, setAnnouncements] = useState<string[]>([
@@ -70,19 +75,13 @@ const Announcement = () => {
         </div>
         {/* ANNOUNCEMENT AREA END */}
 
-        <div className="flex items-center justify-end gap-x-2">
+        <div className="flex items-center justify-end gap-x-6">
           <div className="flex items-center gap-x-2">
             <Languages size={16} />
             <span className="text-sm">English</span>
           </div>
-          <div className="flex items-center ml-5 gap-x-2">
-            <Link href="/sign-in" className="text-sm">
-              Sign In
-            </Link>
-            <span> | </span>
-            <Link href="/sign-up" className="text-sm">
-              Sign Up
-            </Link>
+          <div className="flex items-center gap-x-2">
+            <User />
           </div>
         </div>
       </Container>

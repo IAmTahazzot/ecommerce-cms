@@ -93,7 +93,7 @@ export async function POST(request: Request) {
   return NextResponse.json({
     message: "Product created",
     status: 200,
-    data: JSON.stringify(newProduct),
+    data: newProduct,
   });
 }
 
