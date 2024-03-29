@@ -101,15 +101,14 @@ export const Variants = ({ handleData, existingVariants }: VariantsProps) => {
         </Button>
       ) : (
         <div
-          className='bg-white rounded-xl border border-slate-200'
+          className='bg-white dark:bg-neutral-900 rounded-xl border border-slate-200 dark:border-neutral-800'
           aria-label='Variant container'
         >
           {variantsUI.map((variant, index) => (
             <div
               key={variant.id}
-              className={cn(index !== 0 && 'border-t border-slate-200')}>
+              className={cn(index !== 0 && 'border-t border-slate-200 dark:border-neutral-800')}>
               <Variant
-                // variantId={variant.id}
                 variants={variants}
                 updateVariants={updateVariants}
                 onDelete={removeVariant}

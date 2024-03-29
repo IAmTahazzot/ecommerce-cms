@@ -58,8 +58,9 @@ const ProductCard = ({ product }: { product: ProductType }) => {
         <Image
           src={image}
           fill
-          className="object-cover group-hover/product:scale-110 transition-transform duration-[1s]"
+          className="object-cover group-hover/product:scale-110 transition-transform duration-1000"
           priority={true}
+          sizes="(max-width: 640px) 100vw, 640px"
           alt={"watch"}
         />
       </figure>
@@ -89,7 +90,7 @@ const ProductCard = ({ product }: { product: ProductType }) => {
             buyProduct({
               carts,
               product,
-              shopUrl,
+              shopUrl: storeUrl,
               addToCart,
               openModal,
               selectedVariant: null,
@@ -97,11 +98,11 @@ const ProductCard = ({ product }: { product: ProductType }) => {
               setBuying,
             });
           }}
-          className="w-full font-medium text-xl rounded-full bg-white border border-black text-center py-3 px-4 hover:bg-black hover:text-white transition-colors duration-300"
+          className="w-full font-medium text-xl rounded-full bg-white border border-black text-center py-3 px-4 hover:bg-black hover:text-white transition-colors duration-300 flex items-center justify-center group"
         >
           {buying ? (
             <svg
-              className="animate-spin -ml-1 mr-3 h-7 w-7 text-black dark:text-white group-hover/btn:text-white"
+              className="animate-spin -ml-1 mr-3 h-7 w-7 text-black dark:text-white group-hover:text-white"
               xmlns="http://www.w3.org/2000/svg"
               fill="none"
               viewBox="0 0 24 24"

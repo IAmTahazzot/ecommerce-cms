@@ -21,8 +21,25 @@ const StoreLayout = async ({
   children,
   params: { shopUrl },
 }: StoreLayoutProps) => {
+  const SITE_URL = process.env.SITE_URL;
   const user = await currentUser();
 
+  // If shop doesn't exist return 404 page
+  const shop = await db.store.findUnique({
+    where: {
+      storeUrl: shopUrl,
+    },
+  });
+
+  if (!shop) {
+    return (
+      <div className="flex items-center justify-center my-10">
+        <Image src="/404.gif" alt="404" width={500} height={500} unoptimized />
+      </div>
+    );
+  }
+
+  // If user logged in and doesn't exist in the database create a new user
   if (user) {
     try {
       // if logged in and user is not found create a new user
@@ -32,7 +49,7 @@ const StoreLayout = async ({
         },
       });
 
-      if (getUser) {
+      if (!getUser) {
         const newUser = await db.user.create({
           data: {
             userId: user.id,
@@ -54,21 +71,7 @@ const StoreLayout = async ({
     }
   }
 
-  const shop = await db.store.findUnique({
-    where: {
-      storeUrl: shopUrl,
-    },
-  });
-
-  if (!shop) {
-    return (
-      <div className="flex items-center justify-center my-10">
-        <Image src="/404.gif" alt="404" width={500} height={500} unoptimized />
-      </div>
-    );
-  }
-
-  // getting carts if available by sessionId & userId
+  // import carts to zustand store (useCart) if available by sessionId & userId
   const carts: (CartItemType & { id: number })[] = [];
   const sessionId = cookies().get("sessionId")?.value;
 
@@ -136,9 +139,10 @@ const StoreLayout = async ({
     transformCartData(cartItems);
   }
 
+  // if user is logged in and has cart items in session, merge them with the user's cart in CartSetup component
   return (
     <>
-      <CartSetup carts={carts} />
+      <CartSetup carts={carts} userId={user?.id} sessionId={sessionId} />
       <Header shopUrl={shopUrl} />
       {children}
       <Footer />

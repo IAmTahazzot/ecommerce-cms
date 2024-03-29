@@ -134,10 +134,22 @@ export const NewStoreForm = ({ user }: NewStoreFormProps) => {
               storeUrl: storeData.store.storeUrl,
             }),
           }),
+
+          fetch("/api/category", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+              categoryName: "Food",
+              storeUrl: storeData.store.storeUrl,
+            }),
+          }),
         ]);
 
         const uncategorizedCategory = await categoriesResponse[0].json();
         const clothCategory = await categoriesResponse[1].json();
+        const foodCategory = await categoriesResponse[2].json();
 
         setProcessingMessage("Creating demo variable product...");
         const variants: {
@@ -177,39 +189,66 @@ export const NewStoreForm = ({ user }: NewStoreFormProps) => {
           },
         ];
 
-        const newProduct = await fetch("/api/products", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            userId: userData.id,
-            storeId: storeData.store.storeId,
-            categoryId: clothCategory.data.categoryId,
-            title: "Summer Sneakers",
-            description:
-              "<h1>Summer Sneakers</h1><p>Get ready for summer with these stylish sneakers.</p>",
-            price: 49.99,
-            inventory: 100,
-            costPerProduct: 25.0,
-            compareAtPrice: 59.99,
-            status: "ACTIVE",
-            allowPurchaseOutOfStock: true,
-            variants: variants,
+        const newProducts = await Promise.all([
+          fetch("/api/products", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+              userId: userData.id,
+              storeId: storeData.store.storeId,
+              categoryId: clothCategory.data.categoryId,
+              title: "Sneakers for men",
+              description:
+                "<h1>Man sneakers</h1><p>It is a cool shoes to try on sunny day.</p>",
+              price: 49.99,
+              inventory: 100,
+              costPerProduct: 25.0,
+              compareAtPrice: 59.99,
+              status: "ACTIVE",
+              allowPurchaseOutOfStock: true,
+              variants: variants,
+            }),
           }),
-        });
-        const newProductData = await newProduct.json();
+
+          fetch("/api/products", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+              userId: userData.id,
+              storeId: storeData.store.storeId,
+              categoryId: foodCategory.data.categoryId,
+              title: "Dragon fruit",
+              description:
+                "<h1>Fruit of the dragon</h1><p>Try first then pay</p>",
+              price: 1.99,
+              inventory: 100,
+              costPerProduct: 0.5,
+              compareAtPrice: 2.99,
+              status: "ACTIVE",
+              allowPurchaseOutOfStock: true,
+            }),
+          }),
+        ]);
+
+        const clothProduct = await newProducts[0].json();
+        const foodProduct = await newProducts[1].json();
 
         setProcessingMessage("Creating demo product images...");
-        await fetch("/api/store/demo-images", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            productId: newProductData.data.productId,
+        await Promise.all([
+          fetch("/api/store/demo-images", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+              productsId: [clothProduct.data.productId, foodProduct.data.productId],
+            }),
           }),
-        });
+        ]);
 
         setProcessingMessage("Creating demo billboard...");
         await Promise.all([
@@ -219,11 +258,11 @@ export const NewStoreForm = ({ user }: NewStoreFormProps) => {
               "Content-Type": "application/json",
             },
             body: JSON.stringify({
-              title: "New Arrivals",
-              subtitle: "Check out our latest arrivals",
-              categoryId: uncategorizedCategory.data.categoryId,
+              title: "Food & Drinks",
+              subtitle: "It's time to fill up",
+              categoryId: foodCategory.data.categoryId,
               shopUrl: storeData.store.storeUrl,
-              autoImage: "/demo/billboard-2.jpg",
+              autoImage: "/demo/food-billboard.webp",
             }),
           }),
           fetch("/api/billboard", {
@@ -236,7 +275,7 @@ export const NewStoreForm = ({ user }: NewStoreFormProps) => {
               subtitle: "Get up to 50% off on all summer items",
               categoryId: clothCategory.data.categoryId,
               shopUrl: storeData.store.storeUrl,
-              autoImage: "/demo/billboard-1.png",
+              autoImage: "/demo/cloth-billboard.png",
             }),
           }),
         ]);

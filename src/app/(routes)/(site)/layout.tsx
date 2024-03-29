@@ -1,0 +1,15 @@
+"use client";
+
+import { ThemeProvider } from "next-themes";
+
+export default function StoreManagementLayout({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
+  return (
+    <ThemeProvider attribute="class" defaultTheme="light">
+      {children}
+    </ThemeProvider>
+  );
+}

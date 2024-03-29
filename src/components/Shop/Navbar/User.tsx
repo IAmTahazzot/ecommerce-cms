@@ -9,7 +9,7 @@ import {
   SignOutButton,
 } from "@clerk/nextjs";
 import { UserResource } from "@clerk/types/dist/user";
-import { LogOut, Settings, Store, LayoutDashboard } from "lucide-react";
+import { LogOut, Settings, Store, LayoutDashboard, Package2 } from "lucide-react";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -99,7 +99,7 @@ const UserDropdown = ({
     }
 
     fetchData();
-  }, []);
+  }, [shopUrl, user]);
 
   if (!user) {
     return <span>Unknown user</span>;
@@ -112,20 +112,29 @@ const UserDropdown = ({
           {user.username}
         </span>
       </DropdownMenuTrigger>
-      <DropdownMenuContent side="bottom" sideOffset={12} className="w-56">
+      <DropdownMenuContent side="bottom" sideOffset={12} className="w-56 -right-8 absolute">
         <DropdownMenuLabel>My Account</DropdownMenuLabel>
         <DropdownMenuSeparator />
         <DropdownMenuGroup>
           <DropdownMenuItem>
-            <Image
-              src={user.imageUrl}
-              height={16}
-              width={16}
-              alt={user.fullName + "'s profile"}
-              className="rounded-full mr-2"
-            />
-            <span>Profile</span>
+            <Link href={`/shop/${shopUrl}/profile`} className="flex items-center">
+              <Image
+                src={user.imageUrl}
+                height={16}
+                width={16}
+                alt={user.fullName + "'s profile"}
+                className="rounded-full mr-2"
+              />
+              <span>Profile</span>
+            </Link>
           </DropdownMenuItem>
+          <DropdownMenuItem>
+            <Link href={`/shop/${shopUrl}/orders`} className="flex items-center">
+              <Package2 size={16}  className="mr-2"/>
+              <span>Orders</span>
+            </Link>
+          </DropdownMenuItem>
+
           {userStoreUrl ? (
             <DropdownMenuItem>
               <Link href={`/${userStoreUrl}`} className="flex items-center">
@@ -141,10 +150,6 @@ const UserDropdown = ({
               </Link>
             </DropdownMenuItem>
           )}
-          <DropdownMenuItem>
-            <Settings className="mr-2 w-4 h-4" />
-            <span>Settings</span>
-          </DropdownMenuItem>
         </DropdownMenuGroup>
         <DropdownMenuSeparator />
         <DropdownMenuItem>

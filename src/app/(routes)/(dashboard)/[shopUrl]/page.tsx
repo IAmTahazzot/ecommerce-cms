@@ -2,6 +2,12 @@ import { CounterCard } from "@/components/Widgets/CounterCard";
 import { SalesChart } from "@/components/Widgets/SalesChart";
 import { TrafficView } from "@/components/Widgets/TrafficView";
 import { AiOutlineRise, AiOutlineFall } from "react-icons/ai";
+import { Metadata  } from "next";
+
+export const metadta: Metadata = {
+  title: 'Dashboard',
+  description: 'Admin dashboard for managing your store'
+}
 
 export default function Home() {
   return (

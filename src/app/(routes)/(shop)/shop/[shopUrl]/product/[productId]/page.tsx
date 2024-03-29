@@ -49,7 +49,7 @@ export default async function CategoryPage({
           />
         </div>
 
-        <Product product={product} shopUrl={params.shopUrl} />
+        <Product product={product} />
       </Container>
     </div>
   );

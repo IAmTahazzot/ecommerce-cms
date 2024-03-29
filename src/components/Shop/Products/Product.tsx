@@ -16,6 +16,9 @@ import DOMPurify from "dompurify";
 import { useCart } from "@/hooks/useCart";
 import { ModalType, useModal } from "@/hooks/useModal";
 import { toast } from "sonner";
+import { usePathname, useRouter } from "next/navigation";
+import { useUser } from "@clerk/nextjs";
+import { Textarea } from "@/components/ui/textarea";
 
 const extractVariants = (variants: Variant[]) => {
   const variantsData = {
@@ -143,13 +146,7 @@ export const buyProduct = async ({
   }
 };
 
-export const Product = ({
-  product,
-  shopUrl,
-}: {
-  product: ProductType;
-  shopUrl: string;
-}) => {
+export const Product = ({ product }: { product: ProductType }) => {
   const [quantity, setQuantity] = useState<number>(1);
   const [currentImage, setCurrentImage] = useState<number>(0);
   const [selectedVariant, setSelectedVariant] = useState({
@@ -157,12 +154,20 @@ export const Product = ({
     color: "",
     material: "",
   });
-  const [view, setView] = useState<"description" | "reviews">("reviews");
+  const [view, setView] = useState<"description" | "reviews">("description");
   const [safeDescription, setSafeDescription] = useState<string>("");
+  const [deletingReview, setDeletingReview] = useState<boolean>(false);
   const variants = extractVariants(product.variants || []);
   const [buying, setBuying] = useState<boolean>(false);
   const { addToCart, carts } = useCart();
   const { openModal } = useModal();
+  const path = usePathname();
+  const shopUrl = path.split("/")[2];
+  const { isLoaded, user } = useUser();
+  const reviewRef = React.useRef<HTMLTextAreaElement>(null);
+  const [rating, setRating] = useState<number>(1);
+  const [submittingReview, setSubmittingReview] = useState<boolean>(false);
+  const router = useRouter();
 
   const price =
     product.variants && product.variants.length > 0
@@ -230,6 +235,69 @@ export const Product = ({
       <span className="text-neutral-500 ml-2">({product.Review.length})</span>
     </div>
   );
+
+  const deleteReview = async (reviewId: number) => {
+    try {
+      setDeletingReview(true);
+      const response = await fetch("/api/review", {
+        method: "DELETE",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ reviewId }),
+      });
+
+      const data = await response.json();
+
+      if (response.ok) {
+        toast.success(data.message);
+        router.refresh();
+      } else {
+        toast.error(data.message || "Failed to delete review");
+      }
+    } catch (error) {
+      toast.error("Failed to delete review");
+    } finally {
+      setDeletingReview(false);
+    }
+  };
+
+  const submitReview = async () => {
+    const review = reviewRef.current?.value;
+
+    if (!review) {
+      toast.error("Review message is required");
+      return;
+    }
+
+    try {
+      setSubmittingReview(true);
+      const response = await fetch("/api/review", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          productId: product.productId,
+          rating: rating.toString(),
+          comment: review,
+        }),
+      });
+
+      const data = await response.json();
+
+      if (response.status === 201) {
+        toast.success(data.message);
+        router.refresh();
+      } else {
+        toast.error(data.message || "Failed to submit review");
+      }
+    } catch (error) {
+      toast.error("Failed to submit review");
+    } finally {
+      setSubmittingReview(false);
+    }
+  };
 
   return (
     <div className="grid grid-cols-[200px_1fr_1fr] gap-6">
@@ -472,85 +540,156 @@ export const Product = ({
             </div>
           )}
 
+          {view === "reviews" && (
+            <div>
+              <div className="my-10">
+                {/* review star with rounded progress static bar black color and left side count of review number for one to five */}
+                <div className="flex items-center gap-x-4 mb-6">
+                  <h2 className="text-3xl font-medium">Reviews</h2>
+                  <div className="flex items-center">
+                    {Array.from({ length: 5 }).map((_, index) => {
+                      if (reviewAvg >= index + 1) {
+                        return (
+                          <IoStarSharp
+                            key={index}
+                            className="text-primary-500"
+                          />
+                        );
+                      } else if (reviewAvg >= index + 0.5) {
+                        return (
+                          <IoStarHalfSharp
+                            key={index}
+                            className="text-primary-500"
+                          />
+                        );
+                      } else {
+                        return (
+                          <IoStarSharp
+                            key={index}
+                            className="text-neutral-300"
+                          />
+                        );
+                      }
+                    })}
+                  </div>
+                  <span className="text-lg">
+                    ({product.Review && product.Review.length})
+                  </span>
+                </div>
+
+                <div className="flex items-start gap-x-4 flex-col-reverse">
+                  {Array.from({ length: 5 }).map((_, index) => {
+                    const count =
+                      product.Review &&
+                      product.Review.filter(
+                        (review) => Number(review.reviewLevel) === index + 1
+                      ).length;
+
+                    return (
+                      <div key={index}>
+                        <div className="grid grid-cols-[50px_1fr_1fr] gap-4 items-center">
+                          <span>{index + 1} star</span>
+                          <div className="relative bg-neutral-200 rounded-full overflow-hidden h-3 w-[300px]">
+                            <div
+                              className="bg-black h-full"
+                              style={{
+                                width: `${
+                                  count &&
+                                  product.Review &&
+                                  (count / product.Review.length) * 100
+                                }%`,
+                              }}
+                            ></div>
+                          </div>
+                          <span className="text-lg">{count || 0}</span>
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
+              </div>
+
+              {isLoaded &&
+              user &&
+              product.Review &&
+              product.Review.length > 0 &&
+              product.Review.find((review) => review.userId === user.id) ? (
+                <p className="text-sm my-3">
+                  You have already reviewed this product
+                </p>
+              ) : (
+                <div>
+                  <div>
+                    <h2 className="text-3xl font-medium mb-4">
+                      Write a review
+                    </h2>
+                    <div className="flex items-center gap-x-2 mb-2">
+                      <span className="text-sm">Rating</span>
+                      <div className="flex items-center gap-x-2">
+                        {Array.from({ length: 5 }).map((_, index) => {
+                          return (index + 1) <= rating ? (
+                            <IoStarSharp
+                              key={index}
+                              className="text-sky-500"
+                              onClick={() => setRating(index + 1)}
+                            />
+                          ) : (
+                            <MdOutlineStarOutline
+                              key={index}
+                              className="text-neutral-200"
+                              onClick={() => setRating(index + 1)}
+                            />
+                          );
+                        })}
+                      </div>
+                    </div>
+                  </div>
+                  <Textarea
+                    placeholder="Write a review"
+                    className="w-full lg:w-[400px] resize-none h-24 overflow-hidden"
+                    onInput={(e: React.FormEvent<HTMLTextAreaElement>) => {
+                      e.target.style.height = "auto";
+                      e.target.style.height = e.target.scrollHeight + "px";
+                    }}
+                    ref={reviewRef}
+                  />
+                  <Button
+                    onClick={submitReview}
+                    variant="default"
+                    size="lg"
+                    className="mt-3"
+                    disabled={submittingReview}
+                  >
+                    {submittingReview ? "Submitting..." : "Submit"}
+                  </Button>
+                </div>
+              )}
+            </div>
+          )}
+
           {view === "reviews" &&
             product.Review &&
             product.Review.length > 0 &&
             reviewAvg && (
               <div>
-                <div>
-                  {/* review star with rounded progress static bar black color and left side count of review number for one to five */}
-                  <div className="flex items-center gap-x-4 mb-6">
-                    <h2 className="text-3xl font-medium">Reviews</h2>
-                    <div className="flex items-center">
-                      {Array.from({ length: 5 }).map((_, index) => {
-                        if (reviewAvg >= index + 1) {
-                          return (
-                            <IoStarSharp
-                              key={index}
-                              className="text-primary-500"
-                            />
-                          );
-                        } else if (reviewAvg >= index + 0.5) {
-                          return (
-                            <IoStarHalfSharp
-                              key={index}
-                              className="text-primary-500"
-                            />
-                          );
-                        } else {
-                          return (
-                            <IoStarSharp
-                              key={index}
-                              className="text-neutral-300"
-                            />
-                          );
-                        }
-                      })}
-                    </div>
-                    <span className="text-lg">
-                      ({product.Review && product.Review.length})
-                    </span>
-                  </div>
-
-                  <div className="flex items-start gap-x-4 flex-col-reverse">
-                    {Array.from({ length: 5 }).map((_, index) => {
-                      const count =
-                        product.Review &&
-                        product.Review.filter(
-                          (review) => Number(review.reviewLevel) === index + 1
-                        ).length;
-
-                      return (
-                        <div key={index}>
-                          <div className="grid grid-cols-[50px_1fr_1fr] gap-4 items-center">
-                            <span>{index + 1} star</span>
-                            <div className="relative bg-neutral-200 rounded-full overflow-hidden h-3 w-[300px]">
-                              <div
-                                className="bg-black h-full"
-                                style={{
-                                  width: `${
-                                    count &&
-                                    product.Review &&
-                                    (count / product.Review.length) * 100
-                                  }%`,
-                                }}
-                              ></div>
-                            </div>
-                            <span className="text-lg">{count || 0}</span>
-                          </div>
-                        </div>
-                      );
-                    })}
-                  </div>
-                </div>
-
                 <div className="mt-10">
-                  {product.Review.map((review , index) => (
+                  {product.Review.map((review, index) => (
                     <div key={index} className="flex gap-y-3 flex-col mb-6">
-                      <span className='text-lg font-semibold'>
-                        {/* @ts-ignore */}
-                        {review.user?.firstName || 'Ghost'}
-                      </span>
+                      <div className="flex items-center gap-x-2">
+                        <span className="text-lg font-semibold">
+                          {/* @ts-ignore */}
+                          {review.user?.firstName || "Ghost"}
+                        </span>
+                        {isLoaded && user && user.id === review.userId && (
+                          <Button
+                            onClick={() => deleteReview(review.reviewId)}
+                            variant={"ghost"}
+                            className="text-xs text-muted-foreground"
+                          >
+                            {deletingReview ? "Deleting..." : "Delete"}
+                          </Button>
+                        )}
+                      </div>
                       <div className="flex items-center">
                         {Array.from({ length: 5 }).map((_, index) => {
                           if (Number(review.reviewLevel) >= index + 1) {
@@ -584,14 +723,6 @@ export const Product = ({
                     </div>
                   ))}
                 </div>
-              </div>
-            )}
-
-          {view === "reviews" &&
-            product.Review &&
-            product.Review.length === 0 && (
-              <div>
-                <p className="mt-4 text-lg">No reviews yet</p>
               </div>
             )}
         </div>

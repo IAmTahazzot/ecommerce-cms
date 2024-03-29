@@ -18,5 +18,5 @@ export default async function BillboardPage({ params, }: { params: { billboardId
     }
   })
 
-  return <BillboardForm shopUrl={params.shopUrl} categories={categories} billboard={billboard} />;
+  return <BillboardForm shopUrl={params.shopUrl} categories={categories} billboard={billboard || undefined} />;
 }

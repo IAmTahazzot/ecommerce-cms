@@ -3,9 +3,21 @@ import { currentUser } from "@clerk/nextjs";
 import { NextResponse } from "next/server";
 
 export async function GET(request: Request) {
+  const url = new URL(request.url);
+  const storeUrl = url.searchParams.get("shopUrl");
+
+  if (!storeUrl) {
+    return NextResponse.json({
+      message: "Shop url is required",
+      status: 400,
+    });
+  }
+
   const products = await db.product.findMany({
     where: {
-      storeId: 14,
+      store: {
+        storeUrl: storeUrl
+      } 
     },
     include: {
       variants: true,
@@ -16,7 +28,7 @@ export async function GET(request: Request) {
   return NextResponse.json({
     message: "Products fetched",
     status: 200,
-    data: products,
+    products,
   });
 }
 

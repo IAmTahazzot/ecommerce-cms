@@ -39,7 +39,7 @@ const NavbarMenu = (
         }
     }).concat(...[
         {
-            href: '/about',
+            href: `${shopUrl}/about` ,
             label: 'About us',
             active: pathname === `/about`
         }

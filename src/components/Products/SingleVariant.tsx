@@ -345,10 +345,6 @@ export const Variant = ({
           <Button
             variant={"ghost"}
             onClick={() => {
-              // remove all empty values
-              // const newValues = selectedVariantValues.filter(
-              //   (variantValue) => variantValue.value !== ""
-              // );
               setSelectedVariantValues(prev => {
                 return [
                   ...prev,
@@ -370,7 +366,7 @@ export const Variant = ({
             {selectedVariantValues.map((variantValue, index) => (
               <span
                 key={index}
-                className="block text-sm font-medium bg-slate-100 rounded-full py-2 px-4"
+                className="block text-sm font-medium bg-slate-100 dark:bg-neutral-800 rounded-full py-2 px-4"
               >
                 {variantValue.value}
               </span>

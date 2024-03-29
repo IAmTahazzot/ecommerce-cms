@@ -48,7 +48,7 @@ const ProductFormSchema = z.object({
     { message: "Please select a category." }
   ),
   status: z.boolean(),
-  price: z.number().min(1),
+  price: z.number().min(0),
   inventory: z.number().min(0),
   compareAtPrice: z.number().min(0),
   costPerItem: z.number().min(0),
@@ -253,7 +253,7 @@ export const ProductForm = ({
             {saving ? (
               <div className="flex items-center justify-center gap-x-2">
                 <svg
-                  className="animate-spin -ml-1 mr-3 h-5 w-5 text-white"
+                  className="animate-spin -ml-1 mr-3 h-5 w-5 text-white dark:text-black"
                   xmlns="http://www.w3.org/2000/svg"
                   fill="none"
                   viewBox="0 0 24 24"
@@ -414,7 +414,7 @@ export const ProductForm = ({
                       <FormControl>
                         <Input
                           id="price"
-                          type="number"
+                          type="text"
                           placeholder="Enter the price of the product"
                           className="w-full"
                           {...form.register("price", {
@@ -434,7 +434,7 @@ export const ProductForm = ({
                       <FormControl>
                         <Input
                           id="compareAtPrice"
-                          type="number"
+                          type="text"
                           placeholder="Enter the compare at price of the product"
                           className="w-full"
                           {...form.register("compareAtPrice", {
@@ -456,7 +456,7 @@ export const ProductForm = ({
                       <FormControl>
                         <Input
                           id="costPerItem"
-                          type="number"
+                          type="text"
                           placeholder="Cost per product item"
                           className="w-full"
                           {...form.register("costPerItem", {
@@ -542,7 +542,7 @@ export const ProductForm = ({
                 {saving ? (
                   <div className="flex items-center justify-center gap-x-2">
                     <svg
-                      className="animate-spin -ml-1 mr-3 h-5 w-5 text-white"
+                      className="animate-spin -ml-1 mr-3 h-5 w-5 text-white dark:text-black"
                       xmlns="http://www.w3.org/2000/svg"
                       fill="none"
                       viewBox="0 0 24 24"

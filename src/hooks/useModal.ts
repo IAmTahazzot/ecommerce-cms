@@ -3,6 +3,8 @@ import { create } from "zustand";
 export enum ModalType {
   EDIT_CATEGORY = "EDIT_CATEGORY",
   CART = 'STORE_CARTS_PREVIEW',
+  ADDRESS = 'ADDRESS',
+  PAYMENT = 'PAYMENT',
 }
 
 type ModalStoreProps<ModalData> = {

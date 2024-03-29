@@ -9,35 +9,41 @@ import { db } from "@/db/db";
 import { currentUser } from "@clerk/nextjs";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
-import { Toaster } from '@/components/ui/sonner'
+import { Toaster } from "@/components/ui/sonner";
 import { ModalProvider } from "@/providers/ModalProvider";
+import { ThemeProvider } from "@/providers/ThemeProvider";
 
-const getMyShop = async (): Promise<Shop[] | { error: string, description?: string }> => {
+const getMyShop = async (): Promise<
+  Shop[] | { error: string; description?: string }
+> => {
   const user = await currentUser();
 
   if (!user) {
-    return { error: "Unauthorized access!", description: 'Sign in to access your store.' };
+    return {
+      error: "Unauthorized access!",
+      description: "Sign in to access your store.",
+    };
   }
 
   try {
     const shops = await db.store.findMany({
       where: {
         userId: user.id,
-      }
-    })
+      },
+    });
 
     if (shops.length === 0) {
-      return { error: 'No store found.' };
+      return { error: "No store found." };
     }
 
     return shops.map((shop) => {
       return {
         id: shop.storeUrl,
         name: shop.storeName,
-      }
-    })
+      };
+    });
   } catch (e) {
-    return { error: 'An error occurred fetching stores!' };
+    return { error: "An error occurred fetching stores!" };
   }
 };
 
@@ -78,12 +84,14 @@ const MainLayout = async ({ params, children }: MainLayoutProps) => {
 
   return (
     <div>
-      <Header shops={shops} activeShopUrl={params.shopUrl} />
-      <Sidebar navigation={Navigation} activeShopUrl={params.shopUrl} />
-      <Main>{children}</Main>
-      <NotificationPanel />
-      <Toaster position="bottom-right" />
-      <ModalProvider />
+      <ThemeProvider attribute="class" defaultTheme="light">
+        <Header shops={shops} activeShopUrl={params.shopUrl} />
+        <Sidebar navigation={Navigation} activeShopUrl={params.shopUrl} />
+        <Main>{children}</Main>
+        <NotificationPanel />
+        <Toaster position="bottom-right" />
+        <ModalProvider />
+      </ThemeProvider>
     </div>
   );
 };

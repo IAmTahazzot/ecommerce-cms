@@ -12,6 +12,8 @@ export const POST = async (request: Request, response: Response) => {
   const myCookies = cookies();
   const sessionId = myCookies.get("sessionId")?.value || v4();
 
+  console.log(sessionId)
+
   if (!myCookies.get("sessionId") && !user) {
     const cookieOptions = {
       maxAge: 60 * 60 * 24 * 365 * 10, // 10 years
@@ -136,7 +138,10 @@ export const POST = async (request: Request, response: Response) => {
       });
     }
   } catch (error) {
-    return NextResponse.error()
+    return NextResponse.json({
+      message: "Error adding to cart",
+      error: error 
+    })
   }
 };
 

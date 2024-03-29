@@ -174,7 +174,7 @@ export const VariantsInventory = ({ variants, updateVariants }: VariantsInventor
                   className="border-none"
                 >
                   <TableCell>
-                    <div className="bg-neutral-100 rounded-lg p-1 text-xs flex-[0_0_150px] text-center">
+                    <div className="bg-neutral-100 dark:bg-neutral-800 rounded-lg p-1 text-xs flex-[0_0_150px] text-center">
                       {`${variant.color ? variant.color + ", " : ""}
                          ${variant.size ? variant.size + ", " : ""}
                          ${variant.material ? variant.material : ""}`.replace(

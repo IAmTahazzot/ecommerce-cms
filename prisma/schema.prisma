@@ -8,14 +8,19 @@ datasource db {
 }
 
 model Address {
-  addressId     Int     @id @default(autoincrement())
-  userId        String
-  country       String
-  city          String
-  streetAddress String
-  zipcode       String
-  ip            String?
-  user          User    @relation(fields: [userId], references: [userId], onDelete: Cascade)
+  addressId   Int       @id @default(autoincrement())
+  userId      String    @unique
+  country     String
+  city        String
+  addressOne  String
+  addressTwo  String?
+  state       String
+  phoneNumber String
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime?
+  zipcode     String
+  ip          String?
+  user        User      @relation(fields: [userId], references: [userId], onDelete: Cascade)
 }
 
 model CartItem {
@@ -83,16 +88,26 @@ model OrderItem {
   quantity    Int
   createdAt   DateTime  @default(now())
   updatedAt   DateTime?
-  order       Order     @relation(fields: [orderId], references: [orderId])
+  order       Order     @relation(fields: [orderId], references: [orderId], onDelete: Cascade)
   product     Product   @relation(fields: [productId], references: [productId])
   variant     Variant?  @relation(fields: [variantId], references: [variantId])
+}
+
+enum OrderStatus {
+  PENDING
+  SHIPPING
+  SHIPPED
+  DELIVERED
+  CANCELLED
+  RETURNED
+  REFUNDED
 }
 
 model Order {
   orderId    Int         @id @default(autoincrement())
   userId     String
   storeUrl   String
-  status     String      @default("pending")
+  status     OrderStatus @default(PENDING)
   createdAt  DateTime    @default(now())
   updatedAt  DateTime?
   user       User        @relation(fields: [userId], references: [userId], onDelete: Cascade)
@@ -101,36 +116,47 @@ model Order {
   Payment    Payment[]
 }
 
+enum PaymentStatus {
+  PENDING
+  SUCCESS
+  FAILED
+}
+
 model Payment {
-  paymentId     Int       @id @default(autoincrement())
-  orderId       Int
-  amount        Int
+  paymentId     Int           @id @default(autoincrement())
+  orderId       Int           @unique
+  amount        Float
   paymentMethod String?
-  status        String    @default("pending")
+  status        PaymentStatus @default(PENDING)
   transactionId String?
-  createdAt     DateTime  @default(now())
+  createdAt     DateTime      @default(now())
   updatedAt     DateTime?
-  order         Order     @relation(fields: [orderId], references: [orderId])
+  order         Order         @relation(fields: [orderId], references: [orderId], onDelete: Cascade)
+}
+
+enum ProductStatus {
+  ACTIVE
+  INACTIVE
 }
 
 model Product {
-  productId               Int         @id @default(autoincrement())
+  productId               Int           @id @default(autoincrement())
   userId                  String
   storeId                 Int
-  categoryId              Int         @default(1)
+  categoryId              Int           @default(1)
   title                   String
   description             String?
   price                   Float
   inventory               Int?
   costPerProduct          Float?
   compareAtPrice          Int?
-  status                  String      @default("active")
-  allowPurchaseOutOfStock Boolean     @default(false)
-  createdAt               DateTime    @default(now())
+  status                  ProductStatus @default(ACTIVE)
+  allowPurchaseOutOfStock Boolean       @default(false)
+  createdAt               DateTime      @default(now())
   updatedAt               DateTime?
-  user                    User        @relation(fields: [userId], references: [userId], onDelete: Cascade)
-  store                   Store       @relation(fields: [storeId], references: [storeId], onDelete: Cascade)
-  category                Category    @relation(fields: [categoryId], references: [categoryId], onDelete: SetDefault)
+  user                    User          @relation(fields: [userId], references: [userId], onDelete: Cascade)
+  store                   Store         @relation(fields: [storeId], references: [storeId], onDelete: Cascade)
+  category                Category      @relation(fields: [categoryId], references: [categoryId], onDelete: SetDefault)
   cartItems               CartItem[]
   orderItems              OrderItem[]
   variants                Variant[]
@@ -173,7 +199,7 @@ enum Role {
 }
 
 model User {
-  userId        String         @id
+  userId        String         @id @unique
   firstName     String
   lastName      String
   email         String         @unique

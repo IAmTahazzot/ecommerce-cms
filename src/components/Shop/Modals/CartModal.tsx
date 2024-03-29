@@ -10,9 +10,149 @@ import { FiTrash2 } from "react-icons/fi";
 import { CartItemType } from "../Products/Product";
 import { useCart } from "@/hooks/useCart";
 import { toast } from "sonner";
-import { useState } from "react";
+import { SetStateAction, useState } from "react";
 import { SignedIn, SignedOut, SignInButton } from "@clerk/nextjs";
 import { Button } from "@/components/ui/button";
+
+export const deleteCart = async ({
+  id,
+  removeFromCart,
+}: {
+  id: number;
+  removeFromCart: (id: number) => void;
+}) => {
+  try {
+    const response = await fetch("/api/cart/", {
+      method: "DELETE",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ id }),
+    });
+
+    if (!response.ok) {
+      throw new Error("Failed to delete cart");
+    }
+
+    removeFromCart(id);
+    toast.error("Cart deleted successfully", {});
+  } catch (err) {
+    toast.error("Failed to delete cart");
+  }
+};
+
+export const addQuantity = async ({
+  id,
+  carts,
+  quantity,
+  setAdding,
+  addCollectionToCart,
+}: {
+  id: number;
+  carts: (CartItemType & { id: number })[];
+  quantity: number;
+  setAdding: React.Dispatch<React.SetStateAction<boolean>>;
+  addCollectionToCart: (items: (CartItemType & { id: number })[]) => void;
+}) => {
+  setAdding(true);
+
+  try {
+    const response = await fetch("/api/cart/", {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ id, quantity: quantity + 1 }),
+    });
+
+    if (!response.ok) {
+      throw new Error("Failed to add quantity");
+    }
+
+    setAdding(false);
+
+    // updating the quantity in the cart
+    const updatedCart = carts.map((cart) => {
+      if (cart.id === id) {
+        return { ...cart, quantity: cart.quantity + 1 };
+      }
+      return cart;
+    });
+
+    addCollectionToCart(updatedCart);
+
+    // show success message
+    toast("Quantity updated");
+  } catch (err) {
+    setAdding(false);
+    toast("Something went wrong, please try again later");
+  }
+};
+
+export const removeQuantity = async ({
+  id,
+  carts,
+  quantity,
+  setDeleting,
+  addCollectionToCart,
+  removeCart,
+}: {
+  id: number;
+  carts: (CartItemType & { id: number })[];
+  quantity: number;
+  setDeleting: React.Dispatch<React.SetStateAction<boolean>>;
+  addCollectionToCart: (items: (CartItemType & { id: number })[]) => void;
+  removeCart: (id: number) => void;
+}) => {
+  setDeleting(true);
+
+  if (quantity === 1) {
+    toast.warning("Do you want to remove this item from the cart?", {
+      description: "Product quantity must be at least 1 to keep it in the cart",
+      action: {
+        label: "Yes",
+        onClick: () => deleteCart({
+          id,
+          removeFromCart: removeCart,
+        }),
+      },
+    });
+    setDeleting(false);
+    return;
+  }
+
+  try {
+    const response = await fetch("/api/cart/", {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ id, quantity: quantity - 1 }),
+    });
+
+    if (!response.ok) {
+      throw new Error("Failed to remove quantity");
+    }
+
+    setDeleting(false);
+
+    // updating the quantity in the cart
+    const updatedCart = carts.map((cart) => {
+      if (cart.id === id) {
+        return { ...cart, quantity: cart.quantity - 1 };
+      }
+      return cart;
+    });
+
+    addCollectionToCart(updatedCart);
+
+    // show success message
+    toast("Quantity updated");
+  } catch (err) {
+    setDeleting(false);
+    toast("Something went wrong, please try again later");
+  }
+};
 
 const CartPreview = ({
   id,
@@ -25,112 +165,6 @@ const CartPreview = ({
   const [adding, setAdding] = useState(false);
   const [deleting, setDeleting] = useState(false);
   const { removeFromCart, carts, addCollectionToCart } = useCart();
-
-  const deleteCart = async (id: number) => {
-    try {
-      const response = await fetch("/api/cart/", {
-        method: "DELETE",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ id }),
-      });
-
-      if (!response.ok) {
-        throw new Error("Failed to delete cart");
-      }
-
-      removeFromCart(id);
-      toast.error("Cart deleted successfully", {});
-    } catch (err) {
-      toast.error("Failed to delete cart");
-    }
-  };
-
-  const addQuantity = async (id: number) => {
-    setAdding(true);
-
-    try {
-      const response = await fetch("/api/cart/", {
-        method: "PUT",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ id, quantity: quantity + 1 }),
-      });
-
-      if (!response.ok) {
-        throw new Error("Failed to add quantity");
-      }
-
-      setAdding(false);
-
-      // updating the quantity in the cart
-      const updatedCart = carts.map((cart) => {
-        if (cart.id === id) {
-          return { ...cart, quantity: cart.quantity + 1 };
-        }
-        return cart;
-      });
-
-      addCollectionToCart(updatedCart);
-
-      // show success message
-      toast("Quantity updated");
-    } catch (err) {
-      setAdding(false);
-      toast("Something went wrong, please try again later");
-    }
-  };
-
-  const removeQuantity = async (id: number) => {
-    setDeleting(true);
-
-    if (quantity === 1) {
-      toast.warning("Do you want to remove this item from the cart?", {
-        description:
-          "Product quantity must be at least 1 to keep it in the cart",
-        action: {
-          label: "Yes",
-          onClick: () => deleteCart(id),
-        },
-      });
-      setDeleting(false);
-      return;
-    }
-
-    try {
-      const response = await fetch("/api/cart/", {
-        method: "PUT",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ id, quantity: quantity - 1 }),
-      });
-
-      if (!response.ok) {
-        throw new Error("Failed to remove quantity");
-      }
-
-      setDeleting(false);
-
-      // updating the quantity in the cart
-      const updatedCart = carts.map((cart) => {
-        if (cart.id === id) {
-          return { ...cart, quantity: cart.quantity - 1 };
-        }
-        return cart;
-      });
-
-      addCollectionToCart(updatedCart);
-
-      // show success message
-      toast("Quantity updated");
-    } catch (err) {
-      setDeleting(false);
-      toast("Something went wrong, please try again later");
-    }
-  };
 
   return (
     <div className="px-10 flex gap-x-3 mb-4 group">
@@ -174,7 +208,16 @@ const CartPreview = ({
         <div className="quantity mt-auto flex items-center gap-x-1">
           <button
             disabled={deleting}
-            onClick={() => removeQuantity(id)}
+            onClick={() =>
+              removeQuantity({
+                id,
+                quantity,
+                carts,
+                addCollectionToCart,
+                setDeleting,
+                removeCart: removeFromCart,
+              })
+            }
             className="h-8 w-8 rounded-full border border-nutral-600 flex items-center justify-center hover:bg-black hover:text-white transition-colors duration-300 hover:border-black"
           >
             {deleting ? (
@@ -188,7 +231,15 @@ const CartPreview = ({
           <span className="mx-3">{quantity}</span>
           <button
             disabled={adding}
-            onClick={() => addQuantity(id)}
+            onClick={() =>
+              addQuantity({
+                id,
+                quantity,
+                carts,
+                addCollectionToCart,
+                setAdding,
+              })
+            }
             className="h-8 w-8 rounded-full border border-nutral-600 flex items-center justify-center hover:bg-black hover:text-white transition-colors duration-300 hover:border-black"
           >
             {adding ? (
@@ -203,7 +254,10 @@ const CartPreview = ({
       </div>
       <div className="flex items-center justify-center">
         <button
-          onClick={() => deleteCart(id)}
+          onClick={() => deleteCart({
+            id,
+            removeFromCart,
+          })}
           className="h-8 w-8 rounded-full border border-nutral-600 hidden items-center justify-center hover:bg-black hover:text-white transition-colors duration-300 hover:border-black group-hover:flex"
         >
           <FiTrash2 size={18} />
@@ -264,7 +318,11 @@ const CartModal = () => {
         </Link>
         <SignedIn>
           <Link
-            href="all-products"
+            // href={storeUrl + "profile?address=ACTIVE"}
+            href={storeUrl + 'checkout'}
+            onClick={() => {
+              closeModal();
+            }}
             className="rounded-full border-2 border-black text-black py-3 hover:text-white flex items-center justify-center text-[20px] font-medium hover:bg-[#1d1d1d] transition-colors duration-300"
           >
             Checkout
