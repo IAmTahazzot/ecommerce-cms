@@ -50,7 +50,7 @@ export const AddressForm = ({
   isModal = false,
 }: {
   address: Address | undefined;
-  isModal: boolean;
+  isModal?: boolean;
 }) => {
   const [country, setCountry] = React.useState<keyof typeof data | "">("");
   const { closeModal } = useModal()

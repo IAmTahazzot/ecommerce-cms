@@ -548,6 +548,10 @@ export const Product = ({ product }: { product: ProductType }) => {
                   <h2 className="text-3xl font-medium">Reviews</h2>
                   <div className="flex items-center">
                     {Array.from({ length: 5 }).map((_, index) => {
+                      if (!reviewAvg) {
+                        return <IoStarSharp key={index} className="text-neutral-300" />;
+                      }
+
                       if (reviewAvg >= index + 1) {
                         return (
                           <IoStarSharp
@@ -648,8 +652,9 @@ export const Product = ({ product }: { product: ProductType }) => {
                     placeholder="Write a review"
                     className="w-full lg:w-[400px] resize-none h-24 overflow-hidden"
                     onInput={(e: React.FormEvent<HTMLTextAreaElement>) => {
-                      e.target.style.height = "auto";
-                      e.target.style.height = e.target.scrollHeight + "px";
+                      const target = e.target as HTMLTextAreaElement;
+                      target.style.height = "auto";
+                      target.style.height = target.scrollHeight + "px";
                     }}
                     ref={reviewRef}
                   />

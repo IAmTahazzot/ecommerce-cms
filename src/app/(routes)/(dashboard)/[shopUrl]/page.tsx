@@ -4,7 +4,7 @@ import { TrafficView } from "@/components/Widgets/TrafficView";
 import { AiOutlineRise, AiOutlineFall } from "react-icons/ai";
 import { Metadata  } from "next";
 
-export const metadta: Metadata = {
+export const metadata: Metadata = {
   title: 'Dashboard',
   description: 'Admin dashboard for managing your store'
 }
