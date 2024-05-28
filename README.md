@@ -1,11 +1,12 @@
 <div align='center'>
-<h1> UnityShop CMS </h1>
 
 <img
-  height='200'
-  width='200'
+  height='170'
+  width='170'
   alt='A vector shop logo'
   src='public/brand.svg' />
+
+# CMS For E-commerce
 
 <p> A sleek CMS with NextJS, Prisma, Storybook, PostgreSQL for any startup or small busniness.</p>
 
