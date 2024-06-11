@@ -91,7 +91,10 @@ export const buyProduct = async ({
   if (existingCartItem) {
     // duplicate product
     toast.info(
-      "Product already in cart. You may update the quantity in the cart."
+      "Product already in cart. You may update the quantity in the cart.",
+      {
+        position: "bottom-center",
+      }
     );
     openModal(ModalType.CART);
     setBuying(false);

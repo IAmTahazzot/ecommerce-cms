@@ -36,11 +36,11 @@ export const deleteCart = async ({
 
     removeFromCart(id);
     toast.error("Cart deleted successfully", {
-      position: 'bottom-center'
+      position: "bottom-center",
     });
   } catch (err) {
     toast.error("Failed to delete cart", {
-      position: 'bottom-center'
+      position: "bottom-center",
     });
   }
 };
@@ -116,7 +116,7 @@ export const removeQuantity = async ({
 
   if (quantity === 1) {
     toast.warning("Do you want to remove this item from the cart?", {
-      position: 'bottom-center',
+      position: "bottom-center",
       description: "Product quantity must be at least 1 to keep it in the cart",
       action: {
         label: "Yes",
@@ -158,12 +158,12 @@ export const removeQuantity = async ({
 
     // show success message
     toast("Quantity updated", {
-      position: 'bottom-center'
+      position: "bottom-center",
     });
   } catch (err) {
     setDeleting(false);
     toast("Something went wrong, please try again later", {
-      position: 'bottom-center'
+      position: "bottom-center",
     });
   }
 };
@@ -285,7 +285,6 @@ const CartPreview = ({
 
 const CartModal = () => {
   const [totalPrice, setTotalPrice] = useState(0);
-  const [totalQuantity, setTotalQuantity] = useState(0);
   const { isOpen, type, closeModal } = useModal();
   const shouldOpen: boolean = isOpen && type === ModalType.CART;
   const path = usePathname();
@@ -294,18 +293,14 @@ const CartModal = () => {
   const { carts } = useCart();
 
   useEffect(() => {
-    let price: number = 0;
-
-    carts.forEach((cart) => {
+    let price: number = carts.reduce((total, cart) => {
       if (cart.variant && cart.variant.price) {
-        price += cart.variant.price * cart.quantity;
+        return total + cart.variant.price * cart.quantity;
       } else {
-        price += cart.product.price * cart.quantity;
+        return total + cart.product.price * cart.quantity;
       }
-    });
+    }, 0);
 
-    const quantity = carts.reduce((acc, item) => acc + item.quantity, 0);
-    setTotalQuantity(quantity);
     setTotalPrice(parseFloat(price.toFixed(2)));
   }, [carts]);
 
@@ -341,15 +336,20 @@ const CartModal = () => {
       </main>
 
       <div className="h-[1px] w-full bg-neutral-300 my-5"></div>
-      <div className="px-10 mt-10 mb-4">
-        <span>Total</span>
-        <h1 className="text-6xl font-medium text-[#1d1d1d] flex justify-between items-center">
-          ${totalPrice}
-        </h1>
-      </div>
-      <p className="px-10 text-sm text-neutral-700">
-        Taxes and shipping calculated at checkout
-      </p>
+
+      {totalPrice > 0 && (
+        <>
+          <div className="px-10 mt-10 mb-4">
+            <span>Total</span>
+            <h1 className="text-6xl font-medium text-[#1d1d1d] flex justify-between items-center">
+              ${totalPrice}
+            </h1>
+          </div>
+          <p className="px-10 text-sm text-neutral-700">
+            Taxes and shipping calculated at checkout
+          </p>
+        </>
+      )}
       <div className="controls p-10 space-y-3">
         <Link
           href={storeUrl}
