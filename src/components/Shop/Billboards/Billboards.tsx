@@ -1,7 +1,5 @@
 "use client";
 
-import Image from "next/image";
-import Link from "next/link";
 import { useRef, useState } from "react";
 import { Swiper as SwiperClass } from "swiper/types";
 import { Swiper, SwiperSlide } from "swiper/react";
@@ -12,43 +10,8 @@ import "swiper/css/navigation";
 import "swiper/css/pagination";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { BillBoard, Category } from "@prisma/client";
-
-interface BillboardProps {
-  data: {
-    id: string;
-    label: string;
-    subTitle: string;
-    imageUrl: string;
-    categoryUrl: string;
-  };
-}
-
-const Billboard: React.FC<BillboardProps> = ({
-  data: { label, subTitle, imageUrl },
-}) => {
-  return (
-    <div className="h-full w-full relative flex items-center justify-center">
-      <div className="z-10 flex flex-col items-center space-y-10">
-        <p className="text-[20px]">{subTitle}</p>
-        <h1 className="text-7xl font-medium text-[#1d1d1d]">{label}</h1>
-        <Link
-          className="rounded-full py-4 px-12 bg-black text-white hover:bg-zinc-900 text-xl uppercase font-medium"
-          href="/shop"
-        >
-          Shop now
-        </Link>
-      </div>
-      <Image
-        className="pointer-events-none object-cover z-0"
-        fill
-        priority={false}
-        src={`https://utfs.io/f/${imageUrl}`}
-        alt={label}
-      />
-    </div>
-  );
-};
-
+import { Billboard } from "./Billboard";
+import { BillboardProps } from "./Billboard";
 
 interface BillBoardsProps {
     billboards: (BillBoard & { category: Category })[];

@@ -44,8 +44,11 @@ const ProductCard = ({ product }: { product: ProductType }) => {
   );
 
   const path = usePathname();
-  const shopUrl = "/shop/" + path.split("/")[2];
-  const storeUrl = path.split("/")[2];
+
+  const segments = path.split("/").filter((segment) => segment !== "");
+  const shopIndex = segments.findIndex((segment) => segment === "shop") + 1;
+  const storeUrl = segments[shopIndex];
+  const shopUrl = "/shop/" + storeUrl;
 
   const image =
     (product.images.length > 0 &&
