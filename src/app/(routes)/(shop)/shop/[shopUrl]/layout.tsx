@@ -11,6 +11,7 @@ import { ProductType } from "@/components/Shop/Products/Products";
 import { CartSetup } from "./components/CartSetup";
 import { Toaster } from "@/components/ui/sonner";
 import { redirect } from "next/navigation";
+import { Metadata } from "next";
 
 interface StoreLayoutProps {
   children: React.ReactNode;

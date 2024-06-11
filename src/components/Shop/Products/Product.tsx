@@ -3,12 +3,11 @@
 import React, { useEffect, useState } from "react";
 import { ProductType } from "./Products";
 import Image from "next/image";
-// import { FaStar, FaStarHalfAlt } from "react-icons/fa";
 import { IoStarSharp, IoStarHalfSharp } from "react-icons/io5";
 import { MdOutlineStarOutline } from "react-icons/md";
 
 import { cn } from "@/lib/utils";
-import { CartItem, Review, User, Variant } from "@prisma/client";
+import { CartItem, Variant } from "@prisma/client";
 import { Button } from "@/components/ui/button";
 import { BsPlusLg } from "react-icons/bs";
 import { HiMiniMinus } from "react-icons/hi2";
@@ -549,7 +548,13 @@ export const Product = ({ product }: { product: ProductType }) => {
                   <div className="flex items-center">
                     {Array.from({ length: 5 }).map((_, index) => {
                       if (!reviewAvg) {
-                        return <IoStarSharp key={index} className="text-neutral-300" />;
+                        return (
+                          <IoStarSharp
+                            size={20}
+                            key={index}
+                            className="text-neutral-300"
+                          />
+                        );
                       }
 
                       if (reviewAvg >= index + 1) {
@@ -631,16 +636,18 @@ export const Product = ({ product }: { product: ProductType }) => {
                       <span className="text-sm">Rating</span>
                       <div className="flex items-center gap-x-2">
                         {Array.from({ length: 5 }).map((_, index) => {
-                          return (index + 1) <= rating ? (
+                          return index + 1 <= rating ? (
                             <IoStarSharp
+                              size={20}
                               key={index}
-                              className="text-sky-500"
+                              className="text-sky-500 cursor-pointer"
                               onClick={() => setRating(index + 1)}
                             />
                           ) : (
                             <MdOutlineStarOutline
+                              size={20}
                               key={index}
-                              className="text-neutral-200"
+                              className="text-neutral-200 cursor-pointer"
                               onClick={() => setRating(index + 1)}
                             />
                           );

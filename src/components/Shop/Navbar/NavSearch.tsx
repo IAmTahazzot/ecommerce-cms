@@ -133,8 +133,9 @@ const NavSearch = ({ shopName }: { shopName: string }) => {
             {
               // Show search results only when the search bar is focused
               showResults && (
-                <div className="absolute w-full z-10 lg:max-w-[400px] min-h-[10vh] top-[105%] bg-white shadow-md rounded-xl p-3"
-                  onClick={e => {
+                <div
+                  className="absolute w-full z-10 lg:max-w-[400px] min-h-[10vh] top-[105%] bg-white shadow-md rounded-xl p-3"
+                  onClick={(e) => {
                     e.stopPropagation();
                   }}
                 >

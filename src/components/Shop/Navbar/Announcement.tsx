@@ -38,10 +38,10 @@ const Announcement = () => {
       <Container className="grid grid-cols-[27%_46%_27%] h-full">
         <div className="flex items-center gap-x-3">
           <Link href="mailto:yourmail@site.com">
-            <MailOpen size={24} />
+            <MailOpen size={20} />
           </Link>
           <Link href="https://x.com/@my_business">
-            <X size={24} />
+            <X size={20} />
           </Link>
         </div>
 

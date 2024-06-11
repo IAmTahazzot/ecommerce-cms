@@ -12,6 +12,9 @@ export default async function CategoryPage({
       category: {
         categoryUrl: params.categoryUrl,
       },
+      store: {
+        storeUrl: params.shopUrl,
+      },
     },
     include: {
       category: true,
@@ -26,8 +29,8 @@ export default async function CategoryPage({
         <h1 className="mb-4 font-medium uppercase text-4xl">
           {params.categoryUrl.split("-").join(" ")}
         </h1>
-        <div className='my-6'>
-        {products.length === 0 && <>{<p>No products found</p>}</>}
+        <div className="my-6">
+          {products.length === 0 && <>{<p>No products found</p>}</>}
         </div>
         <Products products={products} />
       </Container>

@@ -1,5 +1,4 @@
 import { db } from "@/db/db";
-import { Products } from "@/components/Shop/Products/Products";
 import Container from "@/components/Shop/Layout/Container";
 import Image from "next/image";
 import { Product } from "@/components/Shop/Products/Product";

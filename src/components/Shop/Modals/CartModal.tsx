@@ -10,7 +10,7 @@ import { FiTrash2 } from "react-icons/fi";
 import { CartItemType } from "../Products/Product";
 import { useCart } from "@/hooks/useCart";
 import { toast } from "sonner";
-import { SetStateAction, useState } from "react";
+import { SetStateAction, useEffect, useState } from "react";
 import { SignedIn, SignedOut, SignInButton } from "@clerk/nextjs";
 import { Button } from "@/components/ui/button";
 
@@ -35,9 +35,13 @@ export const deleteCart = async ({
     }
 
     removeFromCart(id);
-    toast.error("Cart deleted successfully", {});
+    toast.error("Cart deleted successfully", {
+      position: 'bottom-center'
+    });
   } catch (err) {
-    toast.error("Failed to delete cart");
+    toast.error("Failed to delete cart", {
+      position: 'bottom-center'
+    });
   }
 };
 
@@ -82,10 +86,14 @@ export const addQuantity = async ({
     addCollectionToCart(updatedCart);
 
     // show success message
-    toast("Quantity updated");
+    toast("Quantity updated", {
+      position: "bottom-center",
+    });
   } catch (err) {
     setAdding(false);
-    toast("Something went wrong, please try again later");
+    toast("Something went wrong, please try again later", {
+      position: "bottom-center",
+    });
   }
 };
 
@@ -108,13 +116,15 @@ export const removeQuantity = async ({
 
   if (quantity === 1) {
     toast.warning("Do you want to remove this item from the cart?", {
+      position: 'bottom-center',
       description: "Product quantity must be at least 1 to keep it in the cart",
       action: {
         label: "Yes",
-        onClick: () => deleteCart({
-          id,
-          removeFromCart: removeCart,
-        }),
+        onClick: () =>
+          deleteCart({
+            id,
+            removeFromCart: removeCart,
+          }),
       },
     });
     setDeleting(false);
@@ -147,10 +157,14 @@ export const removeQuantity = async ({
     addCollectionToCart(updatedCart);
 
     // show success message
-    toast("Quantity updated");
+    toast("Quantity updated", {
+      position: 'bottom-center'
+    });
   } catch (err) {
     setDeleting(false);
-    toast("Something went wrong, please try again later");
+    toast("Something went wrong, please try again later", {
+      position: 'bottom-center'
+    });
   }
 };
 
@@ -254,10 +268,12 @@ const CartPreview = ({
       </div>
       <div className="flex items-center justify-center">
         <button
-          onClick={() => deleteCart({
-            id,
-            removeFromCart,
-          })}
+          onClick={() =>
+            deleteCart({
+              id,
+              removeFromCart,
+            })
+          }
           className="h-8 w-8 rounded-full border border-nutral-600 hidden items-center justify-center hover:bg-black hover:text-white transition-colors duration-300 hover:border-black group-hover:flex"
         >
           <FiTrash2 size={18} />
@@ -268,12 +284,30 @@ const CartPreview = ({
 };
 
 const CartModal = () => {
+  const [totalPrice, setTotalPrice] = useState(0);
+  const [totalQuantity, setTotalQuantity] = useState(0);
   const { isOpen, type, closeModal } = useModal();
   const shouldOpen: boolean = isOpen && type === ModalType.CART;
   const path = usePathname();
   const storeUrl = "/shop/" + path.split("/")[2] + "/";
 
   const { carts } = useCart();
+
+  useEffect(() => {
+    let price: number = 0;
+
+    carts.forEach((cart) => {
+      if (cart.variant && cart.variant.price) {
+        price += cart.variant.price * cart.quantity;
+      } else {
+        price += cart.product.price * cart.quantity;
+      }
+    });
+
+    const quantity = carts.reduce((acc, item) => acc + item.quantity, 0);
+    setTotalQuantity(quantity);
+    setTotalPrice(parseFloat(price.toFixed(2)));
+  }, [carts]);
 
   return (
     <div
@@ -306,6 +340,16 @@ const CartModal = () => {
         )}
       </main>
 
+      <div className="h-[1px] w-full bg-neutral-300 my-5"></div>
+      <div className="px-10 mt-10 mb-4">
+        <span>Total</span>
+        <h1 className="text-6xl font-medium text-[#1d1d1d] flex justify-between items-center">
+          ${totalPrice}
+        </h1>
+      </div>
+      <p className="px-10 text-sm text-neutral-700">
+        Taxes and shipping calculated at checkout
+      </p>
       <div className="controls p-10 space-y-3">
         <Link
           href={storeUrl}
@@ -319,7 +363,7 @@ const CartModal = () => {
         <SignedIn>
           <Link
             // href={storeUrl + "profile?address=ACTIVE"}
-            href={storeUrl + 'checkout'}
+            href={storeUrl + "checkout"}
             onClick={() => {
               closeModal();
             }}
