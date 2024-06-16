@@ -1,15 +1,15 @@
-import { Products } from "@/components/Shop/Products/Products";
-import { db } from "@/db/db";
-import Image from "next/image";
-import Link from "next/link";
+import { Products } from '@/components/Shop/Products/Products'
+import { db } from '@/db/db'
+import Image from 'next/image'
+import Link from 'next/link'
 
 export default async function BillboardPage({
   params,
 }: {
-  params: { shopUrl: string; billboardId: string };
+  params: { shopUrl: string; billboardId: string }
 }) {
   if (/^\d+$/.test(params.billboardId) === false) {
-    return <div className="text-center px-11 my-5">Invalid Billboard ID</div>;
+    return <div className="text-center px-11 my-5">Invalid Billboard ID</div>
   }
 
   const data = await db.billBoard.findUnique({
@@ -31,10 +31,10 @@ export default async function BillboardPage({
         },
       },
     },
-  });
+  })
 
   if (!data) {
-    return <div className="text-center px-11 my-5">Billboard not found</div>;
+    return <div className="text-center px-11 my-5">Billboard not found</div>
   }
 
   return (
@@ -59,5 +59,5 @@ export default async function BillboardPage({
         <Products products={data.category.products} />
       )}
     </div>
-  );
+  )
 }
