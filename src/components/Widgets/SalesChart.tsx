@@ -10,26 +10,20 @@ import {
   Tooltip,
   Filler,
   Legend,
-} from "chart.js";
-import { Line } from "react-chartjs-2";
+} from 'chart.js'
+import { Line } from 'react-chartjs-2'
 
-ChartJS.register(
-  CategoryScale,
-  LinearScale,
-  PointElement,
-  LineElement,
-  Title,
-  Tooltip,
-  Filler,
-  Legend
-);
+ChartJS.register(CategoryScale, LinearScale, PointElement, LineElement, Title, Tooltip, Filler, Legend)
 
 export const options = {
   responsive: true,
   maintainAspectRatio: true,
   plugins: {
     legend: {
-      position: "top" as const,
+      display: false,
+    },
+    title: {
+      display: false,
     },
   },
   scales: {
@@ -39,33 +33,45 @@ export const options = {
       },
     },
     y: {
+      beginAtZero: true,
+      min: 0,
+      max: 100, // this will change the scale
+      ticks: {
+        stepSize: 25,
+      },
       grid: {
-        display: false, // this will hide horizontal grid lines
+        display: true, // this will hide horizontal grid lines
+        // drawTicks: true,
+        drawBorder: false,
+        drawOnChartArea: true,
+        lineWidth: 1,
+        color: function (context) {
+          return [0, 25, 50, 75, 100].includes(context.tick.value) ? 'rgba(0,0,0,.15)' : '#00000000'
+        },
       },
     },
-  }
-};
+  },
+}
 
-const labels = ["January", "February", "March", "April", "May", "June", "July"];
+const labels = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
 
 export const data = {
   labels,
   datasets: [
     {
-      fill: false,
-      label: '', 
-      data: labels.map(() => Math.floor(Math.random() * 100)),
-      borderColor: "#000",
-      // backgroundColor: "#ddd",
-      tension: 0.4,
+      fill: true,
+      label: '',
+      data: [],
+      borderColor: '#000',
+      tension: 0.1,
     },
   ],
-};
+}
 
 export const SalesChart = () => {
   return (
     <div>
       <Line options={options} data={data} />
     </div>
-  );
-};
+  )
+}

@@ -1,28 +1,26 @@
-import type { Shop } from "@/components/Header/SwitchShop";
+import type { Shop } from '@/components/Header/SwitchShop'
 
-import { Sidebar } from "@/components/Sidebar/Sidebar";
-import { Navigation } from "@/lib/navigations";
-import { Header } from "@/components/Header/Header";
-import { NotificationPanel } from "@/components/NotificationPanel/NotificationPanel";
-import { Main } from "./components/Main";
-import { db } from "@/db/db";
-import { currentUser } from "@clerk/nextjs";
-import { Button } from "@/components/ui/button";
-import Link from "next/link";
-import { Toaster } from "@/components/ui/sonner";
-import { ModalProvider } from "@/providers/ModalProvider";
-import { ThemeProvider } from "@/providers/ThemeProvider";
+import { Sidebar } from '@/components/Sidebar/Sidebar'
+import { Navigation } from '@/lib/navigations'
+import { Header } from '@/components/Header/Header'
+import { NotificationPanel } from '@/components/NotificationPanel/NotificationPanel'
+import { Main } from './components/Main'
+import { db } from '@/db/db'
+import { currentUser } from '@clerk/nextjs'
+import { Button } from '@/components/ui/button'
+import Link from 'next/link'
+import { Toaster } from '@/components/ui/sonner'
+import { ModalProvider } from '@/providers/ModalProvider'
+import { ThemeProvider } from '@/providers/ThemeProvider'
 
-const getMyShop = async (): Promise<
-  Shop[] | { error: string; description?: string }
-> => {
-  const user = await currentUser();
+const getMyShop = async (): Promise<Shop[] | { error: string; description?: string }> => {
+  const user = await currentUser()
 
   if (!user) {
     return {
-      error: "Unauthorized access!",
-      description: "Sign in to access your store.",
-    };
+      error: 'Unauthorized access!',
+      description: 'Sign in to access your store.',
+    }
   }
 
   try {
@@ -30,34 +28,34 @@ const getMyShop = async (): Promise<
       where: {
         userId: user.id,
       },
-    });
+    })
 
     if (shops.length === 0) {
-      return { error: "No store found." };
+      return { error: 'No store found.' }
     }
 
     return shops.map((shop) => {
       return {
         id: shop.storeUrl,
         name: shop.storeName,
-      };
-    });
+      }
+    })
   } catch (e) {
-    return { error: "An error occurred fetching stores!" };
+    return { error: 'An error occurred fetching stores!' }
   }
-};
+}
 
 interface MainLayoutProps {
   params: {
-    shopUrl: string;
-  };
-  children: React.ReactNode;
+    shopUrl: string
+  }
+  children: React.ReactNode
 }
 
 const MainLayout = async ({ params, children }: MainLayoutProps) => {
-  const shops = await getMyShop();
+  const shops = await getMyShop()
 
-  if ("error" in shops) {
+  if ('error' in shops) {
     return (
       <div className="h-screen flex justify-center bg-neutral-50">
         <div className="w-[90%] md:w-[500px] self-start  p-4 my-4 text-neutral-800 border bg-white">
@@ -66,20 +64,17 @@ const MainLayout = async ({ params, children }: MainLayoutProps) => {
             {shops.description ? (
               shops.description
             ) : (
-              <span>
-                Please refresh the page or try another time. Signing up again
-                may resolve the issue.
-              </span>
+              <span>Please refresh the page or try another time. Signing up again may resolve the issue.</span>
             )}
           </p>
           <Link href="/">
-            <Button variant={"default"} size={"sm"} className="mt-4">
+            <Button variant={'default'} size={'sm'} className="mt-4">
               Back to homepage
             </Button>
           </Link>
         </div>
       </div>
-    );
+    )
   }
 
   return (
@@ -93,7 +88,7 @@ const MainLayout = async ({ params, children }: MainLayoutProps) => {
         <ModalProvider />
       </ThemeProvider>
     </div>
-  );
-};
+  )
+}
 
-export default MainLayout;
+export default MainLayout
