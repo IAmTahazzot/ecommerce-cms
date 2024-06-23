@@ -56,6 +56,8 @@ export const Overview = ({ shopUrl }: OverviewType) => {
     fetchOverview()
   }, [])
 
+  const safeSalesData: number[] = sales.map((amount: number | undefined | null) => amount || 0)
+
   return (
     <>
       <CounterCard
@@ -105,7 +107,7 @@ export const Overview = ({ shopUrl }: OverviewType) => {
       />
       <div className="row-start-3 col-span-3 py-6 rounded-lg">
         <h3 className="font-semibold text-xs mb-6">Sales</h3>
-        <SalesChart />
+        <SalesChart sales={safeSalesData} />
       </div>
 
       <div className="p-6 rounded-lg">
