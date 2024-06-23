@@ -42,11 +42,7 @@ export const AddressModal = () => {
   }, []);
 
   if (!isLoaded) {
-    return (
-      <div className="my-4 text-center">
-        <span className="text-muted-foreground text-sm">Loading...</span>
-      </div>
-    );
+    return null
   }
 
   return (

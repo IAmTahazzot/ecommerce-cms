@@ -60,7 +60,7 @@ export const User = () => {
           </SignedIn>
         </>
       ) : (
-        <div className="text-sm">Loading...</div>
+        <div className="text-sm">...</div>
       )}
     </>
   );

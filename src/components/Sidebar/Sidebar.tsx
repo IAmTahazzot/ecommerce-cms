@@ -3,7 +3,7 @@
 import { cn } from '@/lib/utils'
 import { MdKeyboardArrowRight, MdKeyboardArrowDown } from 'react-icons/md'
 
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import { useLayout } from '@/hooks/useLayout'
@@ -45,6 +45,11 @@ export const Sidebar = ({ navigation, activeShopUrl }: SidebarProps) => {
   const [activeSubmenu, setActiveSubmenu] = useState<number | null>(null)
   const { sidebar } = useLayout()
   const shopUrl = 'http://localhost:3000/' + activeShopUrl
+  const [mounted, setMounted] = useState(false)
+
+  useEffect(() => {
+    setMounted(true)
+  }, [])
 
   const handleSubMenu = (rootIndex: number, index: number) => {
     setActiveRoot(rootIndex)
@@ -61,9 +66,13 @@ export const Sidebar = ({ navigation, activeShopUrl }: SidebarProps) => {
       )}
     >
       <div className="flex items-center gap-x-2 h-8 mb-4">
-        <UserButton />
         {user && isLoaded && (
-          <h3 className="font-medium text-sm">{(user?.firstName || 'Unknown user') + ' ' + (user?.lastName || '')}</h3>
+          <>
+            <UserButton />
+            <h3 className="font-medium text-sm">
+              {(user?.firstName || 'Unknown user') + ' ' + (user?.lastName || '')}
+            </h3>
+          </>
         )}
         {!isLoaded && <Skeleton className="w-6 h-6 rounded-full bg-slate-100" />}
         {!isLoaded && <Skeleton className="w-[130px] h-4 rounded-lg bg-slate-100" />}

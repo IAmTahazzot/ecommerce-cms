@@ -11,19 +11,19 @@ import {
   Address,
   Image as ImageType,
   Order,
-  OrderItem,
   OrderStatus,
   Payment,
   PaymentStatus,
   Product,
   Variant,
+  OrderItem as OrderItemType,
 } from '@prisma/client'
 import { cn } from '@/lib/utils'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { EmptyDelivery } from '@/components/Icons'
 
 type OrderType = Order & {
-  orderItems: (OrderItem & {
+  orderItems: (OrderItemType & {
     product: Product & { images: ImageType[] }
     variant: Variant | null
   })[]
@@ -290,7 +290,7 @@ export default function OrdersView() {
 function OrderItem({
   orderItem,
 }: {
-  orderItem: OrderItem & {
+  orderItem: OrderItemType & {
     product: Product & { images: ImageType[] }
     variant: Variant | null
   }
