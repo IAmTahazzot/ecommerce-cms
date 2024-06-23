@@ -45,8 +45,8 @@ export const options = {
         drawBorder: false,
         drawOnChartArea: true,
         lineWidth: 1,
-        color: function (context) {
-          return [0, 25, 50, 75, 100].includes(context.tick.value) ? 'rgba(0,0,0,.15)' : '#00000000'
+        color: function (context: any) {
+          return [0, 25, 50, 75, 100].includes(context.tick.value) ? '#d9d9d9' : '#00000000'
         },
       },
     },
@@ -62,7 +62,7 @@ export const data = {
       fill: true,
       label: '',
       data: [],
-      borderColor: '#000',
+      borderColor: '#d9d9d9',
       tension: 0.1,
     },
   ],
