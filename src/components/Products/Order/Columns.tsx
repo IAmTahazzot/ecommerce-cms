@@ -25,8 +25,16 @@ import { Checkbox } from '@/components/ui/checkbox'
 import { DataTableColumnHeader } from '../ProductsTableHeader'
 import { Order, User, OrderItem, Product } from '@prisma/client'
 import { toast } from 'sonner'
-import { usePathname, useRouter } from 'next/navigation'
+import { useRouter } from 'next/navigation'
 import { useState } from 'react'
+import { RowData } from '@tanstack/react-table'
+
+declare module '@tanstack/react-table' {
+  //allows us to define custom properties for our columns
+  interface ColumnMeta<TData extends RowData, TValue> {
+    filterVariant?: 'text' | 'range' | 'select'
+  }
+}
 
 export type EnhancedOrder = Order & {
   user: User
@@ -117,16 +125,12 @@ export const Status = ({ row }: { row: any }) => {
   return (
     <Select onValueChange={updateStatus} defaultValue={row.original.status}>
       <SelectTrigger
-        className="rounded-full p-1 px-4 w-[120px]"
+        className="rounded-full w-[120px] border-0"
         style={{
           pointerEvents: updating ? 'none' : 'auto',
         }}
       >
-        {updating ? (
-          <span>Upading...</span>
-        ) : (
-          <SelectValue placeholder="Change order status"></SelectValue>
-        )}
+        {updating ? <span>Upading...</span> : <SelectValue placeholder="Change order status" className=''></SelectValue>}
       </SelectTrigger>
       <SelectContent>
         <SelectGroup>
@@ -199,8 +203,12 @@ export const columns: ColumnDef<EnhancedOrder>[] = [
   },
   {
     accessorKey: 'status',
-    header: ({ column }) => <DataTableColumnHeader column={column} title="Status" />,
+    // header: ({ column }) => <DataTableColumnHeader column={column} title="Status" />,
+    header: '',
     cell: Status,
+    meta: {
+      filterVariant: 'select',
+    },
   },
   {
     accessorKey: 'Actions',

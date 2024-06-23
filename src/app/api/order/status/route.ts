@@ -1,5 +1,5 @@
-import { db } from '@/db/db'
 import { currentUser } from '@clerk/nextjs/server'
+import { db } from '@/db/db'
 import { OrderStatus } from '@prisma/client'
 import { NextRequest, NextResponse } from 'next/server'
 

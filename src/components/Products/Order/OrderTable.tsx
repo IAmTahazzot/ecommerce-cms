@@ -11,7 +11,18 @@ import {
   useReactTable,
   ColumnFiltersState,
   getFilteredRowModel,
+  getPaginationRowModel,
+  Column,
 } from '@tanstack/react-table'
+import {
+  Select,
+  SelectContent,
+  SelectGroup,
+  SelectItem,
+  SelectLabel,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select'
 
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table'
 import { Button } from '@/components/ui/button'
@@ -29,15 +40,20 @@ export const OrderTable = <TData, TValue>({ columns, data }: OrderTableProps<TDa
   const table = useReactTable({
     columns,
     data,
+    state: {
+      sorting,
+      columnFilters,
+    },
+    filterFns: {},
     getCoreRowModel: getCoreRowModel<TData>(),
     onSortingChange: setSorting,
     getSortedRowModel: getSortedRowModel(),
     onColumnFiltersChange: setColumnFilters,
     getFilteredRowModel: getFilteredRowModel(),
-    state: {
-      sorting,
-      columnFilters,
-    },
+    getPaginationRowModel: getPaginationRowModel(),
+    debugTable: true,
+    debugHeaders: true,
+    debugColumns: false,
   })
 
   return (
@@ -55,6 +71,11 @@ export const OrderTable = <TData, TValue>({ columns, data }: OrderTableProps<TDa
                     return (
                       <TableHead key={header.id} className="text-xs font-medium" colSpan={header.colSpan}>
                         {header.isPlaceholder ? null : flexRender(header.column.columnDef.header, header.getContext())}
+                        {header.column.getCanFilter() ? (
+                          <div>
+                            <Filter column={header.column} />
+                          </div>
+                        ) : null}
                       </TableHead>
                     )
                   })}
@@ -93,4 +114,38 @@ export const OrderTable = <TData, TValue>({ columns, data }: OrderTableProps<TDa
       </div>
     </div>
   )
+}
+
+function Filter({ column }: { column: Column<any, unknown> }) {
+  const columnFilterValue = column.getFilterValue()
+  const { filterVariant } = column.columnDef.meta ?? {}
+
+  return filterVariant === 'select' ? (
+    <Select
+      onValueChange={(value) => {
+        if (value === 'ALL') {
+          column.setFilterValue('')
+        } else {
+          column.setFilterValue(value)
+        }
+      }}
+      defaultValue={columnFilterValue?.toString()}
+    >
+      <SelectTrigger className="rounded-full w-[120px] border-0 focus-within:outline-0">
+        <SelectValue placeholder="Status" className="!text-xs"></SelectValue>
+      </SelectTrigger>
+      <SelectContent>
+        <SelectGroup>
+          <SelectLabel>Order Status</SelectLabel>
+          <SelectItem value="ALL">All Status</SelectItem>
+          <SelectItem value="PENDING">Pending</SelectItem>
+          <SelectItem value="SHIPPING">Shipping</SelectItem>
+          <SelectItem value="SHIPPED">Shipped</SelectItem>
+          <SelectItem value="DELIVERED">Delivered</SelectItem>
+          <SelectItem value="CANCELLED">Cancelled</SelectItem>
+          <SelectItem value="REFUNDED">Refunded</SelectItem>
+        </SelectGroup>
+      </SelectContent>
+    </Select>
+  ) : null
 }
