@@ -2,6 +2,7 @@
 
 import { PiSidebarDuotone } from 'react-icons/pi'
 import { IoMdNotificationsOutline } from 'react-icons/io'
+import { FaGlobe } from 'react-icons/fa'
 import { VscColorMode } from 'react-icons/vsc'
 
 import { Shop, SwitchShop } from './SwitchShop'
@@ -10,6 +11,7 @@ import { SearchCommands } from './SearchCommands'
 import { useLayout } from '@/hooks/useLayout'
 import { cn } from '@/lib/utils'
 import { useTheme } from 'next-themes'
+import Link from 'next/link'
 
 interface HeaderProps {
   shops: Shop[]
@@ -17,8 +19,7 @@ interface HeaderProps {
 }
 
 export const Header = ({ shops, activeShopUrl }: HeaderProps) => {
-  const { notificationPanel, toggleNotificationPanel, sidebar, toggleSidebar } =
-    useLayout()
+  const { notificationPanel, toggleNotificationPanel, sidebar, toggleSidebar } = useLayout()
   const { setTheme, theme } = useTheme()
 
   return (
@@ -35,14 +36,20 @@ export const Header = ({ shops, activeShopUrl }: HeaderProps) => {
             <PiSidebarDuotone className="h-5 w-5" />
           </Button>
           <SwitchShop shops={shops} activeShopUrl={activeShopUrl} />
+          <Link href={`/shop/${activeShopUrl}`} target='_blank'>
+            <Button variant={'ghost'} className="flex items-center gap-x-2">
+              <FaGlobe size={16} />
+              <span>Go to shop</span>
+            </Button>
+          </Link>
         </div>
         <div className="flex items-center">
           <div className="mr-4">
             <SearchCommands />
           </div>
-          <Button variant={'ghost'} size={'icon'}>
+          {/* <Button variant={'ghost'} size={'icon'}>
             <IoMdNotificationsOutline className="h-5 w-5" />
-          </Button>
+          </Button> */}
           <Button
             variant={'ghost'}
             size={'icon'}
@@ -52,11 +59,7 @@ export const Header = ({ shops, activeShopUrl }: HeaderProps) => {
           >
             <VscColorMode className="h-[18px] w-[18px] rotate-45" />
           </Button>
-          <Button
-            onClick={toggleNotificationPanel}
-            variant={'ghost'}
-            size={'icon'}
-          >
+          <Button onClick={toggleNotificationPanel} variant={'ghost'} size={'icon'}>
             <PiSidebarDuotone className="h-5 w-5 rotate-180" />
           </Button>
         </div>
