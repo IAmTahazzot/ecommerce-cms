@@ -115,3 +115,13 @@ body {
     @apply bg-background text-foreground;
   }
 }
+
+
+/* clerk watermark */
+.cl-card {
+  box-shadow: none !important;
+}
+
+.cl-internal-b3fm6y {
+  display: none !important;
+}
