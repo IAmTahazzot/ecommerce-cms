@@ -11,6 +11,7 @@ import {
   Filler,
   Legend,
 } from 'chart.js'
+import { useTheme } from 'next-themes'
 import { Line } from 'react-chartjs-2'
 
 ChartJS.register(CategoryScale, LinearScale, PointElement, LineElement, Title, Tooltip, Filler, Legend)
@@ -20,6 +21,7 @@ type SalesChartType = {
 }
 
 export const SalesChart = ({ sales }: SalesChartType) => {
+  const { theme }  = useTheme()
   const highestSale = Math.max(...sales)
   const max = Math.ceil(highestSale / 100) * 100
   const step = max / 4
@@ -58,7 +60,7 @@ export const SalesChart = ({ sales }: SalesChartType) => {
             return Array.from({ length: 4 })
               .map((_, i) => i * step)
               .includes(context.tick.value)
-              ? '#d9d9d9'
+              ? '#e1e1e1'
               : '#00000000'
           },
         },
@@ -71,10 +73,10 @@ export const SalesChart = ({ sales }: SalesChartType) => {
     labels,
     datasets: [
       {
-        fill: true,
+        fill: false,
         label: '',
         data: sales,
-        borderColor: '#d9d9d9',
+        borderColor: theme === 'dark' ? '#e1e1e1' : '#000',
         tension: 0.1,
       },
     ],
