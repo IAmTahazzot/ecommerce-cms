@@ -38,7 +38,7 @@ export const ProfileForm = ({
       </div>
       <div className="flex items-center text-sm mt-4">
         <div className="basis-32">
-          <span className="text-xs font-semibold bg-sky-50 rounded-md text-sky-500 px-3 py-1">
+          <span className="text-xs font-semibold rounded-md px-3 py-1">
             Email
           </span>
         </div>

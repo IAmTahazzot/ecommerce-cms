@@ -23,8 +23,8 @@ export const Profile = ({
   }, [params]);
 
   return (
-    <div className="grid grid-cols-[200px_1fr] gap-x-24">
-      <div className="flex flex-col gap-y-2">
+    <div className="grid grid-cols-1 md:grid-cols-[200px_1fr] gap-x-24">
+      <div className="flex flex-row md:flex-col gap-y-2 border-b pb-4 mb-6 md:border-0">
         <Button
           variant={"ghost"}
           className={cn(
