@@ -26,11 +26,11 @@ export const Billboard: React.FC<BillboardProps> = ({
 
   return (
     <div className="h-full w-full relative flex items-center justify-center">
-      <div className="z-10 flex flex-col items-center space-y-10">
-        <p className="text-[20px]">{subTitle}</p>
-        <h1 className="text-7xl font-medium text-[#1d1d1d]">{label}</h1>
+      <div className="z-10 flex flex-col items-center space-y-5 md:space-y-10">
+        <p className="text-base lg:text-[20px]">{subTitle}</p>
+        <h1 className="text-3xl lg:text-7xl font-medium text-[#1d1d1d]">{label}</h1>
         <Link
-          className="rounded-full py-4 px-12 bg-black text-white hover:bg-zinc-900 text-xl uppercase font-medium"
+          className="rounded-full py-3 px-6 md:py-4 md:px-12 bg-black text-white hover:bg-zinc-900 text-base md:text-xl uppercase font-medium"
           href={`/shop/${shopUrl}/billboard/${id}`}
         >
           Shop now
