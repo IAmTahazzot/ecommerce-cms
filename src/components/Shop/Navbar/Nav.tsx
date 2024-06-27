@@ -8,7 +8,7 @@ import { cn } from "@/lib/utils";
 const Nav = ({ categories }: { categories: any }) => {
   return (
     <div className='border-b-[1px]'>
-      <Container className="flex h-20 items-center">
+      <Container className="flex h-20 items-center px-0 md:px-4">
         <NavbarMenu data={categories} />
       </Container>
     </div>
@@ -50,7 +50,7 @@ export const StickyNav = ({ categories }: { categories: any }) => {
           "translate-y-0 opacity-100 shadow-[0_2px_10px_2px_#0000000f] border-[rgba(29, 29, 29, 0.1)]"
       )}
     >
-      <Container className="h-full flex items-center w-full">
+      <Container className="h-full flex items-center w-full px-0 md:px-4">
         <NavbarMenu data={categories} />
       </Container>
     </div>

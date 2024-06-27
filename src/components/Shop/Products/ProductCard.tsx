@@ -64,7 +64,7 @@ const ProductCard = ({ product }: { product: ProductType }) => {
           className="object-cover group-hover/product:scale-110 transition-transform duration-1000"
           priority={true}
           sizes="(max-width: 640px) 100vw, 640px"
-          alt={"watch"}
+          alt={"product picture"}
         />
       </figure>
 

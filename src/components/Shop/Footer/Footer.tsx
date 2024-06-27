@@ -4,7 +4,7 @@ const Footer = () => {
   return (
     <footer className="bg-white border-t mt-10">
       <Container>
-        <div className="mx-auto py-10 flex items-center justify-between">
+        <div className="mx-auto py-10 flex-col md:flex items-center justify-between space-y-3 md:space-y-0">
           <p className="text-[#1d1d1d] text-base">
             <span>&copy;2023 by </span>
             <a

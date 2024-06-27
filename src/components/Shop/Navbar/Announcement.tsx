@@ -35,7 +35,7 @@ const Announcement = () => {
 
   return (
     <div className="bg-[#1d1d1d] text-white h-10">
-      <Container className="grid grid-cols-[27%_46%_27%] h-full">
+      <Container className="grid grid-cols-[auto_auto] md:grid-cols-[27%_46%_27%] h-full">
         <div className="flex items-center gap-x-3">
           <Link href="mailto:yourmail@site.com">
             <MailOpen size={20} />
@@ -47,7 +47,7 @@ const Announcement = () => {
 
         {/* ANNOUNCEMENT AREA */}
         <div
-          className="flex items-center"
+          className="hidden md:flex items-center"
           aria-label="announcements"
           title="announcement"
         >
@@ -62,7 +62,11 @@ const Announcement = () => {
             modules={[Navigation, Autoplay]}
           >
             {announcements.map((announcement, index) => (
-              <SwiperSlide className="text-center" key={index}>
+              <SwiperSlide className="text-center" key={index} style={{
+                overflow: 'hidden',
+                textOverflow: 'ellipsis',
+                whiteSpace: 'nowrap',
+              }}>
                 <span className="text-sm">{announcement}</span>
               </SwiperSlide>
             ))}

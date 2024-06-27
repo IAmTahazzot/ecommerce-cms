@@ -20,7 +20,11 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" suppressHydrationWarning>
-      <ClerkProvider>
+      <ClerkProvider appearance={{
+        variables:{
+          colorPrimary: "#000",
+        }
+      }}>
         <body className={inter.className}>{children}</body>
       </ClerkProvider>
     </html>

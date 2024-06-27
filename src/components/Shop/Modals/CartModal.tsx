@@ -171,7 +171,7 @@ const CartPreview = ({ id, product, variant, quantity }: CartItemType & { id: nu
 
   return (
     <div className="px-10 flex gap-x-3 mb-4 group">
-      <div className="group/cart relative h-28 w-24 rounded-[12px] border overflow-hidden cursor-pointer">
+      <div className="group/cart relative  w-16 h-16 rounded-md md:h-28 md:w-24 md:rounded-[12px] border overflow-hidden cursor-pointer">
         <Image
           src={`https://utfs.io/f/${imageUrl}`}
           alt=""
@@ -282,7 +282,7 @@ const CartModal = () => {
   return (
     <div
       className={cn(
-        'fixed right-0 top-0 h-full bg-white lg:w-[400px] z-[100] shadow-lg overflow-y-auto',
+        'fixed right-0 top-0 h-full bg-white w-full md:w-[400px] z-[100] shadow-lg overflow-y-auto',
         'translate-x-full transition-transform duration-300 ease-in-out',
         shouldOpen && 'translate-x-0'
       )}
@@ -309,7 +309,7 @@ const CartModal = () => {
         <>
           <div className="px-10 mt-10 mb-4">
             <span>Total</span>
-            <h1 className="text-6xl font-medium text-[#1d1d1d] flex justify-between items-center">${totalPrice}</h1>
+            <h1 className="text-4xl md:text-6xl font-medium text-[#1d1d1d] flex justify-between items-center">${totalPrice}</h1>
           </div>
           <p className="px-10 text-sm text-neutral-700">Taxes and shipping calculated at checkout</p>
         </>

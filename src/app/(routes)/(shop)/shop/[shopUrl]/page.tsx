@@ -1,6 +1,5 @@
 import Billboards from "@/components/Shop/Billboards/Billboards";
 import Container from "@/components/Shop/Layout/Container";
-import Product from "@/components/Shop/Products/ProductCard";
 import { Products } from "@/components/Shop/Products/Products";
 import { db } from "@/db/db";
 
@@ -43,7 +42,6 @@ export default async function Shop({
 
       <Container>
         <h1 className='mb-4 font-semibold'>All products</h1>
-
         {products.length === 0 && <>{<p>No products found</p>}</>}
         <Products products={products} />
       </Container>

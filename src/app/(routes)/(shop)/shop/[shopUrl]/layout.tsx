@@ -18,7 +18,7 @@ interface StoreLayoutProps {
   params: { shopUrl: string };
 }
 
-const StoreLayout = async ({
+const StoreLayout: React.FC<StoreLayoutProps> = async ({
   children,
   params: { shopUrl },
 }: StoreLayoutProps) => {
