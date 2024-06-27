@@ -84,13 +84,13 @@ export default function Checkout() {
 
   return (
     <Container>
-      <div className="grid grid-cols-6 gap-6 mt-10">
-        <div className="col-span-4">
+      <div className="grid grid-cols-1 md:grid-cols-6 gap-6 mt-10">
+        <div className="col-span-1 md:col-span-4">
           <h1 className="text-3xl font-bold mb-4">Cart items</h1>
 
-          <div className="w-full border rounded-md">
+          <div className="w-full border rounded-md overflow-x-auto">
             {carts && carts.length > 0 ? (
-              <table className="w-full text-[13px]">
+              <table className="w-[600px] md:w-full text-[13px]">
                 <thead>
                   <tr className="border-b text-left">
                     <th className="px-2 py-3 text-xs font-medium text-neutral-500">
@@ -146,8 +146,8 @@ export default function Checkout() {
         </div>
 
         {carts.length > 0 && (
-          <div className="col-span-2">
-            <div className="max-w-[320px] mx-auto">
+          <div className="col-span-1 md:col-span-2">
+            <div className="w-full md:max-w-[320px] mx-auto">
               <h1 className="text-3xl font-bold mb-4">Checkout</h1>
 
               <div className="bg-neutral-100 rounded-md p-4 text-sm space-y-4">
